@@ -14,7 +14,7 @@
             padding: 5px;
         }
     </style>
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <x-app.navbar />
         <div class="container-fluid py-4 px-5">
@@ -49,6 +49,7 @@
                 <h1 class="hidden" id="broker"></h1>
                 <h3 style="text-align:center">{{$active_round_display_name}}</h3>
                 <form id="myForm">
+                    @csrf
                     <table>
                         <thead>
                             <tr>
@@ -68,9 +69,9 @@
                                 <td>{{ $company->company_name }}</td>
                                 <td>{{ $company->price }}</td>
                                 <td><input type="number" name="buy_quantity" min="0" class="buy-quantity"></td>
-                                <td class="buy-value"></td>
+                                <td class="buy-value" min="0"></td>
                                 <td><input type="number" name="sell_quantity" min="0" class="sell-quantity"></td>
-                                <td class="sell-value"></td>
+                                <td class="sell-value" min="0"></td>
                             </tr>
                             @endforeach
                         </tbody>

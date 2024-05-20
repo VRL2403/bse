@@ -3,8 +3,6 @@ $(document).ready(function () {
     $('.brokerSelection').click(function () {
         var selectedValueName = $(this).text();
         var selectedValue = $(this).attr('id');
-        console.log(selectedValueName);
-        console.log(selectedValue);
         $('#broker-btn').text(selectedValueName);
         $('#broker').text(selectedValue);
         data = {
@@ -31,8 +29,6 @@ $(document).ready(function () {
     $('body').on('click', '.teamSelection', function () {
         var selectedValueName = $(this).text();
         var selectedValue = $(this).attr('id');
-        console.log(selectedValueName, 'ffdhg');
-        console.log(selectedValue, 'hghgf');
         $('#team').text(selectedValue);
         $('#team-btn').text(selectedValueName);
     });
@@ -40,11 +36,15 @@ $(document).ready(function () {
     $('input[name="sell_quantity"]').blur(function () {
         var companyId = $(this).closest('tr').find('td:first').text();
         var sellQuantity = $(this).val();
-        console.log(companyId, sellQuantity);
+        var teamId = $('#team').text();
         $.ajax({
-            url: '/your-endpoint',
+            url: '/admin/check_sell_quantity',
             type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             data: {
+                team_id: teamId,
                 company_id: companyId,
                 sell_quantity: sellQuantity
             },
@@ -112,33 +112,41 @@ $(document).ready(function () {
 
 
     $('#myForm').submit(function (e) {
-        console.log('ghhghj');
         e.preventDefault();
 
         var orders = [];
         $('#myTable tr').each(function () {
             var row = $(this);
+            var price = parseInt(row.find('td:eq(2)').text());
             var buyQuantity = parseInt(row.find('.buy-quantity').val());
             var sellQuantity = parseInt(row.find('.sell-quantity').val());
-
             // If the quantity is greater than 0, add the order to the array
             if (buyQuantity > 0 || sellQuantity > 0) {
+                if (isNaN(buyQuantity)) {
+                    buyQuantity = 0;
+                }
+                if (isNaN(sellQuantity)) {
+                    sellQuantity = 0;
+                }
                 var order = {
                     team_id: $('#team').text(),
                     round_id: $('#active_round').text(),
                     company_id: row.find('td:first').text(),
                     buy_quantity: buyQuantity,
                     sell_quantity: sellQuantity,
-                    buy_value: parseFloat(row.find('.buy-value').text()),
-                    sell_value: parseFloat(row.find('.sell-value').text())
+                    buy_value: price * buyQuantity,
+                    sell_value: price * sellQuantity
                 };
                 orders.push(order);
             }
         });
         // Send the orders to the server
         $.ajax({
-            url: '/your-endpoint',
+            url: '/admin/save_order',
             type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             data: {
                 orders: orders
             },

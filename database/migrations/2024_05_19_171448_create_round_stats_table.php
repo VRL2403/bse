@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('teams', function (Blueprint $table) {
+        Schema::create('round_stats', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('team_name');
-            $table->string('first_team_member');
-            $table->string('second_team_member');
-            $table->string('third_team_member');
-            $table->string('fourth_team_member');
-            $table->double('virtual_amount');
+            $table->integer('team_id');
+            $table->integer('round_id');
+            $table->double('total_buy_value');
+            $table->double('total_sell_value');
+            $table->double('net_value');
             $table->tinyInteger('status')->default(1);
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('teams');
+        Schema::dropIfExists('round_stats');
     }
 };

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BrokerHouses;
 use App\Models\Companies;
+use App\Models\Ledger;
+use App\Models\Orders;
 use App\Models\TeamBrokerHousesTagging;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -57,5 +59,42 @@ class OrdersController extends Controller
     {
         $active_round = DB::table("active_round")->where('status', 1)->pluck('round_name')->first();
         return response()->json($active_round);
+    }
+
+    public function checkSellQuantity(Request $request)
+    {
+        $check = Ledger::where('team_id', $request->team_id)
+            ->where('company_id', $request->company_id)->pluck('quantity')->first();
+        if ($check >= (int)$request->sell_quantity) {
+            $response['status'] = 500;
+            $response['message'] = 'You don\'t own such quantity';
+            return json_encode($response);
+        } else {
+            $response['status'] = 200;
+            $response['message'] = '';
+            return json_encode($response);
+        }
+    }
+
+    public function saveOrders(Request $request)
+    {
+        // Validate the request data
+        $request->validate([
+            'orders.*.team_id' => 'required|exists:teams,id',
+            'orders.*.round_id' => 'required|exists:active_round,id',
+            'orders.*.company_id' => 'required|exists:companies,id',
+            'orders.*.buy_quantity' => 'required|integer|min:0',
+            'orders.*.sell_quantity' => 'required|integer|min:0',
+            'orders.*.buy_value' => 'required|numeric|min:0',
+            'orders.*.sell_value' => 'required|numeric|min:0',
+        ]);
+
+        // Save each order in the database
+        foreach ($request->orders as $orderData) {
+            Orders::create($orderData);
+        }
+
+        // Return a success response
+        return response()->json(['message' => 'Orders saved successfully.']);
     }
 }
