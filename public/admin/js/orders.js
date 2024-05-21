@@ -20,8 +20,8 @@ $(document).ready(function () {
                     $.each(res['data'], function (index, item) {
                         $('#selectedTeam').append(`<li><a class="teamSelection border-radius-md" href="javascript:;" id=` + item['id'] + `>` + item['team_name'] + `</a></li>`);
                     });
+                    $(".team-dropdown").removeClass("hidden");
                 }
-                $(".team-dropdown").removeClass("hidden");
             }
         });
     });
@@ -31,6 +31,9 @@ $(document).ready(function () {
         var selectedValue = $(this).attr('id');
         $('#team').text(selectedValue);
         $('#team-btn').text(selectedValueName);
+        if (selectedValue.length > 0) {
+            $(".orderForm").removeClass("hidden");
+        }
     });
 
     $('input[name="sell_quantity"]').blur(function () {
@@ -107,7 +110,7 @@ $(document).ready(function () {
                 console.log(textStatus, errorThrown);
             }
         });
-    }, 10000000);  // 10000 milliseconds = 10 seconds
+    }, 1000);  // 10000 milliseconds = 10 seconds
 
 
 
@@ -153,10 +156,19 @@ $(document).ready(function () {
             success: function (response) {
                 // handle success
                 console.log(response);
+                $('#myForm')[0].reset();
+                $('#myTable tr').each(function () {
+                    // This will clear the second and third column of each row
+                    $(this).find('td:eq(4), td:eq(6)').html('');
+                });
+                alert('Data Submitted Successfully');
+                location.reload();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 // handle error
                 console.log(textStatus, errorThrown);
+                alert('Error in submitting, please retry');
+                location.reload();
             }
         });
     });

@@ -43,7 +43,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row orderForm">
+            <div class="row orderForm hidden">
                 <h1 class="hidden" id="active_round">{{$active_round_id}}</h1>
                 <h1 class="hidden" id="team"></h1>
                 <h1 class="hidden" id="broker"></h1>
