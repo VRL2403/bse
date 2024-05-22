@@ -47,7 +47,7 @@
                 <h1 class="hidden" id="active_round">{{$active_round_id}}</h1>
                 <h1 class="hidden" id="team"></h1>
                 <h1 class="hidden" id="broker"></h1>
-                <h3 style="text-align:center">{{$active_round_display_name}}</h3>
+                <h3 style="text-align:center" id="active_round_name">{{$active_round_display_name}}</h3>
                 <form id="myForm">
                     @csrf
                     <table>
@@ -77,7 +77,7 @@
                         </tbody>
                     </table>
                     <br />
-                    <button type="submit" class="btn btn-sm btn-dark btn-icon d-flex align-items-center mb-0">
+                    <button type="submit" class="btn btn-sm btn-dark btn-icon d-flex align-items-center mb-0" id='submit-orders'>
                         <span class="btn-inner--text">Submit</span>
                     </button>
                 </form>

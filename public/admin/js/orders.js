@@ -1,5 +1,8 @@
 
 $(document).ready(function () {
+    $('#submit-orders').prop('disabled', true);
+
+
     $('.brokerSelection').click(function () {
         var selectedValueName = $(this).text();
         var selectedValue = $(this).attr('id');
@@ -99,8 +102,8 @@ $(document).ready(function () {
             type: 'GET',
             success: function (response) {
                 // Check if the value returned by the AJAX call is not the same as the stored value
-                // console.log(response, response, sessionStorage.getItem('active_round'));
-                if (response !== sessionStorage.getItem('active_round')) {
+                console.log(response, sessionStorage.getItem('active_round'));
+                if (response.toString() !== sessionStorage.getItem('active_round').toString()) {
                     // Refresh the page
                     location.reload();
                 }
@@ -110,7 +113,7 @@ $(document).ready(function () {
                 console.log(textStatus, errorThrown);
             }
         });
-    }, 1000);  // 10000 milliseconds = 10 seconds
+    }, 10000);  // 10000 milliseconds = 10 seconds
 
 
 
@@ -171,6 +174,35 @@ $(document).ready(function () {
                 location.reload();
             }
         });
+    });
+
+    // Function to check if any input has a non-zero value
+    function checkInputs() {
+        var hasNonZero = false;
+        $('#myTable input').each(function () {
+            if ($(this).val() != 0 && $(this).val() != '') {
+                hasNonZero = true;
+                return false;  // Break out of .each() loop
+            }
+        });
+        return hasNonZero;
+    }
+
+    // Event handler for input change and focusout events
+    $('#myTable input').on('change focusout', function () {
+        if (checkInputs()) {
+            // If any input has a non-zero value, enable the submit button
+            $('#submit-orders').prop('disabled', false);
+        } else {
+            // Otherwise, disable the submit button
+            $('#submit-orders').prop('disabled', true);
+        }
+    });
+
+    // Event handler for input focusin event
+    $('#myTable input').on('focusin', function () {
+        // Disable the submit button when an input field is in focus
+        $('#submit-orders').prop('disabled', true);
     });
 
 });

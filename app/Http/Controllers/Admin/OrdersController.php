@@ -57,7 +57,7 @@ class OrdersController extends Controller
 
     public function checkActiveRound(Request $request)
     {
-        $active_round = DB::table("active_round")->where('status', 1)->pluck('round_name')->first();
+        $active_round = DB::table("active_round")->where('status', 1)->pluck('id')->first();
         return response()->json($active_round);
     }
 
