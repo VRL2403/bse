@@ -14,11 +14,8 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                'Content-Type': 'application/json'
-            },
-            data: data,
+            contentType: 'application/json',
+            data: JSON.stringify(data),
             type: 'get',
             url: '/admin/teams_tagged',
 
