@@ -12,7 +12,12 @@ $(document).ready(function () {
         data = {
             broker_id: selectedValue
         }
+
         $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                'Content-Type': 'application/json'
+            },
             data: data,
             type: 'get',
             url: '/admin/teams_tagged',
