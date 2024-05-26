@@ -32,7 +32,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-4 team-dropdown hidden">
+                <div class="col-4 team-dropdown">
                     <label>Select a Team:</label><br />
                     <div class="btn-group dropup">
                         <button type="button" class="btn btn-dark dropdown-toggle" id="team-btn" data-bs-toggle="dropdown" aria-expanded="false">
@@ -43,7 +43,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row orderForm hidden">
+            <div class="row orderForm">
                 <h1 class="hidden" id="active_round">{{$active_round_id}}</h1>
                 <h1 class="hidden" id="team"></h1>
                 <h1 class="hidden" id="broker"></h1>
