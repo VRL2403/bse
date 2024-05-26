@@ -44,7 +44,7 @@ class OrdersController extends Controller
 
     public function teamsTagged(Request $request)
     {
-        $selected_broker = $request->broker_id;
+        $selected_broker = (int)$request->broker_id;
         $teams_tagged = TeamBrokerHousesTagging::leftjoin('teams', 'teams.id', 'teams_broker_houses_tagging.team_id')
             ->where('teams_broker_houses_tagging.broker_house_id', $selected_broker)
             ->where('teams.status', 1)
@@ -65,14 +65,20 @@ class OrdersController extends Controller
     {
         $check = Ledger::where('team_id', $request->team_id)
             ->where('company_id', $request->company_id)->pluck('quantity')->first();
-        if ($check >= (int)$request->sell_quantity) {
+        if ($check == null) {
             $response['status'] = 500;
             $response['message'] = 'You don\'t own such quantity';
             return json_encode($response);
         } else {
-            $response['status'] = 200;
-            $response['message'] = '';
-            return json_encode($response);
+            if ($check >= (int)$request->sell_quantity) {
+                $response['status'] = 500;
+                $response['message'] = 'You don\'t own such quantity';
+                return json_encode($response);
+            } else {
+                $response['status'] = 200;
+                $response['message'] = '';
+                return json_encode($response);
+            }
         }
     }
 
@@ -87,6 +93,7 @@ class OrdersController extends Controller
             'orders.*.sell_quantity' => 'required|integer|min:0',
             'orders.*.buy_value' => 'required|numeric|min:0',
             'orders.*.sell_value' => 'required|numeric|min:0',
+            'orders.*.brokerage' => 'required|numeric|min:0',
         ]);
 
         // Save each order in the database

@@ -27,7 +27,7 @@
                         </button>
                         <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownMenuButton">
                             @foreach($broker_houses as $key => $data)
-                            <li><a class="brokerSelection border-radius-md" href="javascript:;" id="{{$data->id}}">{{$data->broker_name }}</a></li>
+                            <li><a class="brokerSelection border-radius-md" href="javascript:;" id="{{$data->id}}" charges="{{$data->charges}}">{{$data->broker_name }}</a></li>
                             @endforeach
                         </ul>
                     </div>
@@ -47,6 +47,7 @@
                 <h1 class="hidden" id="active_round">{{$active_round_id}}</h1>
                 <h1 class="hidden" id="team"></h1>
                 <h1 class="hidden" id="broker"></h1>
+                <h1 class="hidden" id="brokerage_value"></h1>
                 <h3 style="text-align:center" id="active_round_name">{{$active_round_display_name}}</h3>
                 <form id="myForm">
                     @csrf
@@ -60,6 +61,8 @@
                                 <th>Buy Value</th>
                                 <th>Sell Quantity</th>
                                 <th>Sell Value</th>
+                                <th>Brokerage</th>
+                                <th>Message</th>
                             </tr>
                         </thead>
                         <tbody id="myTable">
@@ -72,6 +75,8 @@
                                 <td class="buy-value" min="0"></td>
                                 <td><input type="number" name="sell_quantity" min="0" class="sell-quantity"></td>
                                 <td class="sell-value" min="0"></td>
+                                <td class="brokerage-paid" min="0"></td>
+                                <td class="message" style="color: red;"></td>
                             </tr>
                             @endforeach
                         </tbody>
