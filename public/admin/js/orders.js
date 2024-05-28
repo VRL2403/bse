@@ -11,13 +11,13 @@ $(document).ready(function () {
         $("#brokerage_value").text(charges);
         data = {
             broker_id: selectedValue
-        }
-
+        };
+        call = '/admin/teams_tagged/' + selectedValue.toString();
         $.ajax({
             contentType: 'application/json',
-            data: JSON.stringify(data),
+            // data: data,
             type: 'get',
-            url: '/admin/teams_tagged',
+            url: call,
 
             success: function (response) {
                 let res = $.parseJSON(response);
@@ -63,7 +63,6 @@ $(document).ready(function () {
                 response = $.parseJSON(response);
                 console.log(response['message'], $(this).closest('tr').find('td:eq(7)').text());
                 if (response['message'] != "") {
-                    console.log('here');
                     row.find('.message').text(response['message']);
                 }
             },
@@ -135,7 +134,6 @@ $(document).ready(function () {
             type: 'GET',
             success: function (response) {
                 // Check if the value returned by the AJAX call is not the same as the stored value
-                console.log(response, sessionStorage.getItem('active_round'));
                 if (response.toString() !== sessionStorage.getItem('active_round').toString()) {
                     // Refresh the page
                     location.reload();

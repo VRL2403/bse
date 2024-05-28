@@ -44,7 +44,7 @@ class OrdersController extends Controller
 
     public function teamsTagged(Request $request)
     {
-        $selected_broker = (int)$request->broker_id;
+        $selected_broker = (int)$request->route('id');
         $teams_tagged = TeamBrokerHousesTagging::leftjoin('teams', 'teams.id', 'teams_broker_houses_tagging.team_id')
             ->where('teams_broker_houses_tagging.broker_house_id', $selected_broker)
             ->where('teams.status', 1)

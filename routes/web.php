@@ -37,6 +37,7 @@ Route::get('/admin/broker_houses', 'App\Http\Controllers\Admin\BrokerHousesContr
 Route::get('/admin/teams', 'App\Http\Controllers\Admin\TeamsController@teams')->name('teams');
 Route::get('/admin/orders', 'App\Http\Controllers\Admin\OrdersController@brokers')->name('orders');
 Route::get('/admin/teams_tagged', 'App\Http\Controllers\Admin\OrdersController@teamsTagged');
+Route::get('/admin/teams_tagged/{id?}', 'App\Http\Controllers\Admin\OrdersController@teamsTagged');
 Route::get('/admin/active_round', 'App\Http\Controllers\Admin\OrdersController@checkActiveRound');
 Route::post('/admin/check_sell_quantity', 'App\Http\Controllers\Admin\OrdersController@checkSellQuantity');
 Route::post('/admin/save_order', 'App\Http\Controllers\Admin\OrdersController@saveOrders');
