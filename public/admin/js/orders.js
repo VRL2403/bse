@@ -2,20 +2,47 @@
 $(document).ready(function () {
     $('#submit-orders').prop('disabled', true);
 
+    $(window).keydown(function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            return false;
+        }
+    });
+    var orders = [];
+    var teamId;
+
+    $(document).ready(function () {
+        var broker_id = sessionStorage.getItem("broker_id");
+        if (broker_id) {
+            $('a.brokerSelection[id="' + broker_id.toString() + '"]').click();
+        }
+    });
+
+    function fetchAmount(teamId, sellList, defaultAmount) {
+        for (var i = 0; i < sellList.length; i++) {
+            if (sellList[i]['team_id'] === teamId) {
+                return sellList[i]['sum_of_total'];
+            }
+        }
+        // If team_id is not found, return the default amount
+        return defaultAmount;
+    }
+
     $('.brokerSelection').click(function () {
         var selectedValueName = $(this).text();
         var selectedValue = $(this).attr('id');
         var charges = $(this).attr('charges');
+        console.log(charges, 'fsrgfsd');
         $('#broker-btn').text(selectedValueName);
         $('#broker').text(selectedValue);
         $("#brokerage_value").text(charges);
+        sessionStorage.setItem("broker_id", selectedValue);
         data = {
             broker_id: selectedValue
         };
         call = '/admin/teams_tagged/' + selectedValue.toString();
         $.ajax({
             contentType: 'application/json',
-            // data: data,
             type: 'get',
             url: call,
 
@@ -25,6 +52,7 @@ $(document).ready(function () {
                 if (res['data'].length > 0) {
                     $.each(res['data'], function (index, item) {
                         $('#selectedTeam').append(`<li><a class="teamSelection border-radius-md" href="javascript:;" id=` + item['id'] + `>` + item['team_name'] + `</a></li>`);
+                        $('#broker-btn').prop('disabled', true);
                     });
                     $(".team-dropdown").removeClass("hidden");
                 }
@@ -46,37 +74,42 @@ $(document).ready(function () {
         var row = $(this).closest('tr');
         var companyId = $(this).closest('tr').find('td:first').text();
         var sellQuantity = $(this).val();
-        var teamId = $('#team').text();
-        $.ajax({
-            url: '/admin/check_sell_quantity',
-            type: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: {
-                team_id: teamId,
-                company_id: companyId,
-                sell_quantity: sellQuantity
-            },
-            success: function (response) {
-                // handle success
-                response = $.parseJSON(response);
-                console.log(response['message'], $(this).closest('tr').find('td:eq(7)').text());
-                if (response['message'] != "") {
-                    row.find('.message').text(response['message']);
+        teamId = $('#team').text();
+        if (sellQuantity.toString().length > 0) {
+            $.ajax({
+                url: '/admin/check_sell_quantity',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    team_id: teamId,
+                    company_id: companyId,
+                    sell_quantity: sellQuantity
+                },
+                success: function (response) {
+                    // handle success
+                    response = $.parseJSON(response);
+                    if (response['message'] != "") {
+                        row.find('.message').text(response['message']);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // handle error
+                    console.log(textStatus, errorThrown);
                 }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                // handle error
-                console.log(textStatus, errorThrown);
-            }
-        });
+            });
+        }
+        if (sellQuantity.toString().length == 0) {
+            row.find('.message').text('');
+        }
     });
 
     $('.buy-quantity, .sell-quantity').on('input', function () {
         var row = $(this).closest('tr');
         var price = parseFloat(row.find('td:nth-child(3)').text());
         var charges = $('#brokerage_value').text();
+        console.log('charges', charges)
         var buyQuantity = parseInt(row.find('.buy-quantity').val());
         var sellQuantity = parseInt(row.find('.sell-quantity').val());
 
@@ -89,12 +122,12 @@ $(document).ready(function () {
         var sellP = parseFloat(sellP);
         var brokageP = 0;
         if (!isNaN(buyP) && !isNaN(sellP)) {
-            brokageP = (buyP + sellP) * parseFloat(charges);
+            brokageP = ((buyP + sellP) * (parseFloat(charges) / 100)).toFixed(2);
         }
         else if (!isNaN(buyP)) {
-            brokageP = (buyP) * parseFloat(charges);
+            brokageP = ((buyP) * (parseFloat(charges) / 100)).toFixed(2);
         } else if (!isNaN(sellP)) {
-            brokageP = (sellP) * parseFloat(charges);
+            brokageP = ((sellP) * (parseFloat(charges) / 100)).toFixed(2);
         } else {
         }
         row.find('.brokerage-paid').text(brokageP);
@@ -111,22 +144,48 @@ $(document).ready(function () {
     var totalBuyTransactions = 0;
 
     $('input[name="buy_quantity"]').blur(function () {
-        var price = $(this).closest('tr').find('td:nth-child(3)').text();
-        var buyQuantity = $(this).val();
+        // var price = $(this).closest('tr').find('td:nth-child(3)').text();
+        // var buyQuantity = $(this).val();
+        var amount_allocated = $('#amount_alloted').text();
+        var amount_used_by_team = JSON.parse($('#amount_used').text());
+        // var brokerage = $(this).closest('tr').find('td:nth-child(8)').text();
+        var amount = fetchAmount(parseInt($('#team').text()), amount_used_by_team, amount_allocated);
+        // // Calculate the total buy transactions
+        // totalBuyTransactions += (price * buyQuantity) + brokerage;
 
-        // Calculate the total buy transactions
-        totalBuyTransactions += price * buyQuantity;
+
+        $('#myTable tr').each(function () {
+            var row = $(this);
+            var price = parseInt(row.find('td:eq(2)').text());
+            var buyQuantity = parseInt(row.find('.buy-quantity').val());
+            var sellQuantity = parseInt(row.find('.sell-quantity').val());
+            var charges = $('#brokerage_value').text();
+            charges = parseFloat(charges) / 100;
+            // If the quantity is greater than 0, add the order to the array
+            if (buyQuantity > 0 || sellQuantity > 0) {
+                if (isNaN(buyQuantity)) {
+                    buyQuantity = 0;
+                }
+                if (isNaN(sellQuantity)) {
+                    sellQuantity = 0;
+                }
+                totalBuyTransactions += (price * buyQuantity) + (((price * buyQuantity) + (price * sellQuantity)) * charges);
+            }
+        });
+        console.log(totalBuyTransactions);
         // Check if the overall buy transactions are less than 100
-        if (totalBuyTransactions < 10000000) {
+        if (totalBuyTransactions < amount) {
             console.log("Total buy transactions are less than 10 Lakhs.");
         } else {
+            alert('Round Buying Limit Exceed');
+            $('#submit-orders').prop('disabled', true);
             console.log("Total buy transactions are not less than 10 Lakhs.");
         }
     });
 
     // Save a value in the browser session
     sessionStorage.setItem('active_round', $("#active_round").text());
-    console.log(sessionStorage.getItem('active_round'));
+
     // Make an AJAX call every 10 seconds
     setInterval(function () {
         $.ajax({
@@ -151,14 +210,18 @@ $(document).ready(function () {
     $('#myForm').submit(function (e) {
         e.preventDefault();
 
-        var orders = [];
+        var counter = 0;
         $('#myTable tr').each(function () {
             var row = $(this);
             var price = parseInt(row.find('td:eq(2)').text());
             var buyQuantity = parseInt(row.find('.buy-quantity').val());
             var sellQuantity = parseInt(row.find('.sell-quantity').val());
             var charges = $('#brokerage_value').text();
-            charges = parseFloat(charges);
+            var msg = row.find('.message').text();
+            if (msg.length > 0) {
+                counter += 1;
+            }
+            charges = parseFloat(charges) / 100;
             // If the quantity is greater than 0, add the order to the array
             if (buyQuantity > 0 || sellQuantity > 0) {
                 if (isNaN(buyQuantity)) {
@@ -171,6 +234,7 @@ $(document).ready(function () {
                     team_id: $('#team').text(),
                     round_id: $('#active_round').text(),
                     company_id: row.find('td:first').text(),
+                    company_name: row.find('td:eq(1)').text(),
                     buy_quantity: buyQuantity,
                     sell_quantity: sellQuantity,
                     buy_value: price * buyQuantity,
@@ -181,6 +245,27 @@ $(document).ready(function () {
             }
         });
         // Send the orders to the server
+        if (counter > 0) {
+            alert('There are ' + counter.toString() + ' errors in the order being placed! Kindly review');
+        } else {
+            const modalBody = $('.modal-body tbody');
+            modalBody.empty(); // Clear existing rows
+            orders.forEach(item => {
+                modalBody.append(`
+                    <tr>
+                        <td>${item.company_name}</td>
+                        <td>${item.buy_quantity}</td>
+                        <td>${item.sell_quantity}</td>
+                    </tr>
+                `);
+            });
+            $('#order_confirmation').modal('show');
+            $('#order_confirmation').removeClass('hidden').addClass('shown');
+
+        }
+    });
+
+    $('#confirm_and_place').on('click', function (e) {
         $.ajax({
             url: '/admin/save_order',
             type: 'POST',
@@ -192,7 +277,6 @@ $(document).ready(function () {
             },
             success: function (response) {
                 // handle success
-                console.log(response);
                 $('#myForm')[0].reset();
                 $('#myTable tr').each(function () {
                     // This will clear the second and third column of each row

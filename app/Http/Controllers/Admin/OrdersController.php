@@ -11,6 +11,7 @@ use App\Models\TeamBrokerHousesTagging;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use DB;
+use Config;
 
 class OrdersController extends Controller
 {
@@ -18,7 +19,11 @@ class OrdersController extends Controller
     {
         // Replace underscores with spaces
         $str = str_replace('_', ' ', $str);
-        $str = str_replace('price', 'round', $str);
+        $str = str_replace('price', '', $str);
+        if (strpos($str, 'round') === false) {
+            // Append the target word to the existing text
+            $str .= ' round';
+        }
         // Convert to sentence case
         $str = strtolower($str);
         $str = ucfirst($str);
@@ -28,18 +33,22 @@ class OrdersController extends Controller
 
     public function brokers(Request $request)
     {
-        $selected_broker = Session::get('selected_broker');
         $broker_houses = BrokerHouses::where('status', '=', 1)
-            ->when($selected_broker != null, function ($query) use ($selected_broker) {
-                $query->where('id', $selected_broker);
-            })
             ->orderBy('broker_name', 'asc')
             ->get();
         $active_round = DB::table("active_round")->where('status', 1)->pluck('round_name')->first();
+        $amount_alloted = Config::get('constants.ROUND_LIMITS')[$active_round];
         $active_round_id = DB::table("active_round")->where('status', 1)->pluck('id')->first();
+        $amount_used = Orders::select('team_id', \DB::raw('SUM(buy_value + brokerage) as sum_of_total'))
+            ->where('round_id', $active_round_id)
+            ->groupBy('team_id')
+            ->get()->toArray();
+        foreach ($amount_used as &$amount) {
+            $amount['sum_of_total'] = $amount_alloted - $amount['sum_of_total'];
+        }
         $companies = Companies::where('status', 1)->select('id', 'company_name', $active_round . ' as price')->get();
         $active_round_display_name = $this->formatString($active_round);
-        return view('orders', compact('broker_houses', 'companies', 'active_round_display_name', 'active_round_id'));
+        return view('orders', compact('broker_houses', 'companies', 'active_round_display_name', 'active_round_id', 'amount_used', 'amount_alloted'));
     }
 
     public function teamsTagged(Request $request)
