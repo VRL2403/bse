@@ -45,8 +45,10 @@
             </div>
             <div class="row orderForm hidden">
                 <h1 class="hidden" id="amount_used">{{json_encode($amount_used)}}</h1>
+                <h1 class="hidden" id="cash_available">{{json_encode($cash_available)}}</h1>
                 <h1 class="hidden" id="amount_alloted">{{$amount_alloted}}</h1>
                 <h1 class="hidden" id="active_round">{{$active_round_id}}</h1>
+                <h1 class="hidden" id="limit_flag">{{$limit_flag}}</h1>
                 <h1 class="hidden" id="team"></h1>
                 <h1 class="hidden" id="broker"></h1>
                 <h1 class="hidden" id="brokerage_value"></h1>

@@ -41,6 +41,8 @@ Route::get('/admin/teams_tagged/{id?}', 'App\Http\Controllers\Admin\OrdersContro
 Route::get('/admin/active_round', 'App\Http\Controllers\Admin\OrdersController@checkActiveRound');
 Route::post('/admin/check_sell_quantity', 'App\Http\Controllers\Admin\OrdersController@checkSellQuantity');
 Route::post('/admin/save_order', 'App\Http\Controllers\Admin\OrdersController@saveOrders');
+Route::get('/admin/configuration', 'App\Http\Controllers\Admin\StatsController@config')->name('configuration');
+Route::get('/admin/cal_stats', 'App\Http\Controllers\Admin\StatsController@calculateStats');
 
 
 Route::get('/admin/users', 'App\Http\Controllers\Admin\UsersController@user_list');

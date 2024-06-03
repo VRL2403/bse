@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\BrokerHouses;
+use App\Models\CashLedger;
 use App\Models\Companies;
 use App\Models\Ledger;
 use App\Models\Orders;
@@ -37,18 +38,30 @@ class OrdersController extends Controller
             ->orderBy('broker_name', 'asc')
             ->get();
         $active_round = DB::table("active_round")->where('status', 1)->pluck('round_name')->first();
+        $limit_flag = DB::table("active_round")->where('status', 1)->pluck('limit_flag')->first();
         $amount_alloted = Config::get('constants.ROUND_LIMITS')[$active_round];
         $active_round_id = DB::table("active_round")->where('status', 1)->pluck('id')->first();
         $amount_used = Orders::select('team_id', \DB::raw('SUM(buy_value + brokerage) as sum_of_total'))
             ->where('round_id', $active_round_id)
             ->groupBy('team_id')
             ->get()->toArray();
-        foreach ($amount_used as &$amount) {
-            $amount['sum_of_total'] = $amount_alloted - $amount['sum_of_total'];
+        $cash_available = CashLedger::select('team_id', 'cash_in_hand')->get()->toArray();
+        if ($limit_flag == 1) {
+            foreach ($amount_used as &$amount) {
+                $amount['sum_of_total'] = $amount_alloted - $amount['sum_of_total'];
+            }
+        } else {
+            foreach ($cash_available as &$cash) {
+                foreach ($amount_used as &$amount) {
+                    if ($amount['team_id'] == $cash['team_id']) {
+                        $cash['cash_in_hand'] = $cash['cash_in_hand'] - $amount['sum_of_total'];
+                    }
+                }
+            }
         }
         $companies = Companies::where('status', 1)->select('id', 'company_name', $active_round . ' as price')->get();
         $active_round_display_name = $this->formatString($active_round);
-        return view('orders', compact('broker_houses', 'companies', 'active_round_display_name', 'active_round_id', 'amount_used', 'amount_alloted'));
+        return view('orders', compact('broker_houses', 'companies', 'active_round_display_name', 'active_round_id', 'amount_used', 'amount_alloted', 'limit_flag', 'cash_available'));
     }
 
     public function teamsTagged(Request $request)

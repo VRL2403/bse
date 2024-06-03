@@ -146,10 +146,22 @@ $(document).ready(function () {
     $('input[name="buy_quantity"]').blur(function () {
         // var price = $(this).closest('tr').find('td:nth-child(3)').text();
         // var buyQuantity = $(this).val();
-        var amount_allocated = $('#amount_alloted').text();
-        var amount_used_by_team = JSON.parse($('#amount_used').text());
         // var brokerage = $(this).closest('tr').find('td:nth-child(8)').text();
-        var amount = fetchAmount(parseInt($('#team').text()), amount_used_by_team, amount_allocated);
+        var limit_flag = $('#limit_flag').text();
+        if (limit_flag == 1 | limit_flag == '1') {
+            var amount_allocated = $('#amount_alloted').text();
+            var amount_used_by_team = JSON.parse($('#amount_used').text());
+            var amount = fetchAmount(parseInt($('#team').text()), amount_used_by_team, amount_allocated);
+        } else {
+            console.log('entered');
+            var cash_available = JSON.parse($('#cash_available').text());
+            var amount = 0;
+            for (var i = 0; i < cash_available.length; i++) {
+                if (cash_available[i]['team_id'] === parseInt($('#team').text())) {
+                    amount = cash_available[i]['cash_in_hand'];
+                }
+            }
+        }
         // // Calculate the total buy transactions
         // totalBuyTransactions += (price * buyQuantity) + brokerage;
 
