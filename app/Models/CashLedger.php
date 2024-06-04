@@ -14,4 +14,9 @@ class CashLedger extends Model
         'cash_in_hand'
     ];
     protected $table = 'cash_ledger';
+
+    public function team()
+    {
+        return $this->belongsTo(Teams::class);
+    }
 }

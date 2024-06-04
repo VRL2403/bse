@@ -43,6 +43,10 @@ Route::post('/admin/check_sell_quantity', 'App\Http\Controllers\Admin\OrdersCont
 Route::post('/admin/save_order', 'App\Http\Controllers\Admin\OrdersController@saveOrders');
 Route::get('/admin/configuration', 'App\Http\Controllers\Admin\StatsController@config')->name('configuration');
 Route::get('/admin/cal_stats', 'App\Http\Controllers\Admin\StatsController@calculateStats');
+Route::get('/admin/change_round/{id?}', 'App\Http\Controllers\Admin\StatsController@changeActiveRound');
+Route::get('/admin/ledger', 'App\Http\Controllers\Admin\StatsController@ledger')->name('ledger');
+Route::get('/admin/holdings', 'App\Http\Controllers\Admin\StatsController@holdings')->name('holdings');
+Route::get('/admin/holdings/{id?}', 'App\Http\Controllers\Admin\StatsController@teamHoldings');
 
 
 Route::get('/admin/users', 'App\Http\Controllers\Admin\UsersController@user_list');

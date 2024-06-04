@@ -18,30 +18,27 @@
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <x-app.navbar />
         <div class="container-fluid py-4 px-5">
-            <div class="row orderForm hidden">
-                <form id="myForm">
-                    @csrf
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Team Name</th>
-                                <th>Cash Ledger</th>
-                                <th>Portfolio Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($data as $data)
-                            <tr>
-                                <td id="{{ $data->id }}">{{$data->team_name}}</td>
-                                <td>{{ $data->cash_ledger }}</td>
-                                <td>{{ $data->portfolio_value }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    <br />
-                </form>
+            <div class="row">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Team Name</th>
+                            <th>Cash Ledger</th>
+                            <th>Portfolio Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($teamsData as $data)
+                        <tr>
+                            <td>{{$data->TeamName}}</td>
+                            <td>{{ $data->CashLedger }}</td>
+                            <td>{{ $data->PortfolioValue }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
+        </div>
         </div>
     </main>
 

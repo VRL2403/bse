@@ -19,14 +19,13 @@
         <x-app.navbar />
         <div class="container-fluid py-4 px-5">
             @csrf
-            <button type="button" class="btn btn-dark" id="rounds-btn">
-                <a class="round border-radius-md" href="admin/cal_stats"></a>Calculate Stats
-            </button>
+            <button type="button" class="btn btn-dark" id="cal_stats">Calculate Stats</button>
+
             <hr />
             <div class="row pt-8">
                 <h3>Set Active Round</h3>
                 <div class="row">
-                    <div class="col-2">
+                    <div class="col-4">
                         <div class="btn-group dropup">
                             <button type="button" class="btn btn-dark dropdown-toggle" id="rounds-btn" data-bs-toggle="dropdown" aria-expanded="false">
                                 Rounds
@@ -38,6 +37,9 @@
                             </ul>
                         </div>
                     </div>
+                    <div class="col-4">
+                        <p><b>Current Active Round: </b>{{$active_round_display_name}}</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -45,3 +47,4 @@
 
 </x-app-layout>
 <script src="{{asset('admin/js/jquery.min.js?v=0.1')}}"></script>
+<script src="{{asset('admin/js/config_stats.js?v=0.1')}}"></script>

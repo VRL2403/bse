@@ -15,4 +15,14 @@ class Ledger extends Model
         'value'
     ];
     protected $table = 'ledger';
+
+    public function team()
+    {
+        return $this->belongsTo(Teams::class);
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Companies::class);
+    }
 }

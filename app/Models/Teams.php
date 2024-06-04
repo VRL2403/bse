@@ -9,4 +9,14 @@ class Teams extends Model
 {
     use SoftDeletes;
     protected $table = 'teams';
+
+    public function ledger()
+    {
+        return $this->hasMany(Ledger::class);
+    }
+
+    public function cashLedger()
+    {
+        return $this->hasOne(CashLedger::class);
+    }
 }

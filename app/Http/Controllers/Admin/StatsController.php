@@ -13,18 +13,40 @@ use DB;
 
 class StatsController extends Controller
 {
+    function formatString($str)
+    {
+        // Replace underscores with spaces
+        $str = str_replace('_', ' ', $str);
+        $str = str_replace('price', '', $str);
+        if (strpos($str, 'round') === false) {
+            // Append the target word to the existing text
+            $str .= ' round';
+        }
+        // Convert to sentence case
+        $str = strtolower($str);
+        $str = ucfirst($str);
+
+        return $str;
+    }
+
     public function config(Request $request)
     {
         $rounds = DB::table("active_round")->select('id', 'round_name')->get()->toArray();
-        return view('config', compact('rounds'));
+        $active_round = DB::table("active_round")->where('status', 1)->pluck('round_name')->first();
+        $active_round_display_name = $this->formatString($active_round);
+        return view('config', compact('rounds', 'active_round_display_name'));
     }
 
     public function calculateStats(Request $request)
     {
+        CashLedger::truncate();
+        Ledger::truncate();
         $teams = Teams::select('id', 'team_name', 'virtual_amount')->where('status', 1)->get();
-        $activeRound = DB::table("active_round")->where('status', 1)->pluck('id')->first();
+        // $activeRound = DB::table("active_round")->where('status', 1)->pluck('id')->first();
         foreach ($teams as $team) {
-            $orders = Orders::where('team_id', $team->id)->where('round_id', $activeRound)->get();
+            $orders = Orders::where('team_id', $team->id)
+                // ->where('round_id', $activeRound)
+                ->get();
             $cash = CashLedger::where('team_id', $team->id)->first();
 
             // If there is no cash record for the team, create a new one
@@ -61,5 +83,35 @@ class StatsController extends Controller
             }
         }
         return response()->json(['message' => 'Stats updated successfully.']);
+    }
+
+    public function changeActiveRound(Request $request)
+    {
+        $selected_round = (int)$request->route('id');
+        $active_round = DB::table('active_round')->update(['status' => 0]);
+        $update_round = DB::table('active_round')->where('id', $selected_round)->update(['status' => 1]);
+        return response()->json(['message' => 'Active Round Updated successfully.']);
+    }
+
+    public function ledger(Request $request)
+    {
+        $active_round = DB::table("active_round")->where('status', 1)->pluck('round_name')->first();
+        $teamsData = DB::select("SELECT t.team_name AS TeamName, cl.cash_in_hand  AS CashLedger, SUM(l.quantity * c." . $active_round . ") AS PortfolioValue FROM teams t JOIN ledger l ON t.id = l.team_id JOIN companies c ON l.company_id = c.id JOIN cash_ledger cl ON t.id = cl.team_id GROUP BY t.team_name, cl.cash_in_hand;");
+
+        return view('stats', compact('teamsData'));
+    }
+
+    public function holdings(Request $request)
+    {
+        $teams = Teams::select('id', 'team_name')->where('status', 1)->get();
+        return view('holdings', compact('teams'));
+    }
+
+    public function teamHoldings(Request $request)
+    {
+        $selected_team = (int)$request->route('id');
+        $active_round = DB::table("active_round")->where('status', 1)->pluck('round_name')->first();
+        $holdings = DB::select('SELECT c.company_name, ' . $active_round . ' AS current_value, SUM(l.quantity * c.' . $active_round . ') AS total_value, SUM(l.quantity) AS quantity FROM ledger l JOIN companies c ON l.company_id = c.id WHERE l.team_id = ' . $selected_team . ' GROUP BY c.company_name, c.' . $active_round . ';');
+        return response()->json(['holdings' => $holdings, 'status' => 200]);
     }
 }
