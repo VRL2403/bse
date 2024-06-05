@@ -70,11 +70,13 @@ class StatsController extends Controller
 
                 if ($order->buy_quantity > 0) {
                     $cash->cash_in_hand -= $order->buy_value;
+                    $cash->cash_in_hand -= $order->brokerage;
                     $holding->quantity += $order->buy_quantity;
                 }
 
                 if ($order->sell_quantity > 0) {
                     $cash->cash_in_hand += $order->sell_value;
+                    $cash->cash_in_hand -= $order->brokerage;
                     $holding->quantity -= $order->sell_quantity;
                 }
 

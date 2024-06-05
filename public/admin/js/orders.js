@@ -142,7 +142,7 @@ $(document).ready(function () {
     });
 
 
-    $('input[name="buy_quantity"]').blur(function () {
+    $('input[name="buy_quantity"]').enter(function () {
         var totalBuyTransactions = 0;
         // var price = $(this).closest('tr').find('td:nth-child(3)').text();
         // var buyQuantity = $(this).val();
