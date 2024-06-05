@@ -141,9 +141,9 @@ $(document).ready(function () {
         return true;
     });
 
-    var totalBuyTransactions = 0;
 
     $('input[name="buy_quantity"]').blur(function () {
+        var totalBuyTransactions = 0;
         // var price = $(this).closest('tr').find('td:nth-child(3)').text();
         // var buyQuantity = $(this).val();
         // var brokerage = $(this).closest('tr').find('td:nth-child(8)').text();
@@ -153,7 +153,6 @@ $(document).ready(function () {
             var amount_used_by_team = JSON.parse($('#amount_used').text());
             var amount = fetchAmount(parseInt($('#team').text()), amount_used_by_team, amount_allocated);
         } else {
-            console.log('entered');
             var cash_available = JSON.parse($('#cash_available').text());
             var amount = 0;
             for (var i = 0; i < cash_available.length; i++) {

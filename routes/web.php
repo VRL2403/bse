@@ -47,6 +47,7 @@ Route::get('/admin/change_round/{id?}', 'App\Http\Controllers\Admin\StatsControl
 Route::get('/admin/ledger', 'App\Http\Controllers\Admin\StatsController@ledger')->name('ledger');
 Route::get('/admin/holdings', 'App\Http\Controllers\Admin\StatsController@holdings')->name('holdings');
 Route::get('/admin/holdings/{id?}', 'App\Http\Controllers\Admin\StatsController@teamHoldings');
+Route::get('/admin/reset_game', 'App\Http\Controllers\Admin\StatsController@resetGame');
 
 
 Route::get('/admin/users', 'App\Http\Controllers\Admin\UsersController@user_list');

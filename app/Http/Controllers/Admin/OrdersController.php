@@ -85,20 +85,20 @@ class OrdersController extends Controller
 
     public function checkSellQuantity(Request $request)
     {
-        $check = Ledger::where('team_id', $request->team_id)
-            ->where('company_id', $request->company_id)->pluck('quantity')->first();
+        $check = Ledger::where('team_id', (int)$request->team_id)
+            ->where('company_id', (int)$request->company_id)->pluck('quantity')->first();
         if ($check == null) {
             $response['status'] = 500;
             $response['message'] = 'You don\'t own such quantity';
             return json_encode($response);
         } else {
             if ($check >= (int)$request->sell_quantity) {
-                $response['status'] = 500;
-                $response['message'] = 'You don\'t own such quantity';
-                return json_encode($response);
-            } else {
                 $response['status'] = 200;
                 $response['message'] = '';
+                return json_encode($response);
+            } else {
+                $response['status'] = 500;
+                $response['message'] = 'You don\'t own such quantity';
                 return json_encode($response);
             }
         }

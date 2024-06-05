@@ -114,4 +114,14 @@ class StatsController extends Controller
         $holdings = DB::select('SELECT c.company_name, ' . $active_round . ' AS current_value, SUM(l.quantity * c.' . $active_round . ') AS total_value, SUM(l.quantity) AS quantity FROM ledger l JOIN companies c ON l.company_id = c.id WHERE l.team_id = ' . $selected_team . ' GROUP BY c.company_name, c.' . $active_round . ';');
         return response()->json(['holdings' => $holdings, 'status' => 200]);
     }
+
+    public function resetGame(Request $request)
+    {
+        Orders::truncate();
+        Ledger::truncate();
+        CashLedger::truncate();
+        DB::table('active_round')->update(['status' => 0]);
+        DB::table('active_round')->where('id', 1)->update(['status' => 1]);
+        return response()->json(['message' => 'Game reset successfully.']);
+    }
 }
