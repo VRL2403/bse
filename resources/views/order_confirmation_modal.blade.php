@@ -1,6 +1,6 @@
 <!-- modal.blade.php -->
 <div class="modal fade hidden" id="order_confirmation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Please Confirm the Order:</h5>
@@ -18,7 +18,9 @@
                             <tr>
                                 <th>Company Name</th>
                                 <th>Buy Quantity</th>
+                                <th>Buy Value</th>
                                 <th>Sell Quantity</th>
+                                <th>Sell Value</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -27,8 +29,10 @@
                     </table>
             </div>
             <div class="modal-footer">
+                <label>Order Total:</label>
+                <label class="order_total"></label>
                 <button type="button" class="btn btn-primary" id="confirm_and_place" data-dismiss="modal">Place Order</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

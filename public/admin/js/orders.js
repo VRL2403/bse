@@ -70,7 +70,8 @@ $(document).ready(function () {
         }
     });
 
-    $('input[name="sell_quantity"]').blur(function () {
+    $('input[name="sell_quantity"]').blur(function (e) {
+        e.preventDefault();
         var row = $(this).closest('tr');
         var companyId = $(this).closest('tr').find('td:first').text();
         var sellQuantity = $(this).val();
@@ -142,8 +143,10 @@ $(document).ready(function () {
     });
 
 
-    $('input[name="buy_quantity"]').enter(function () {
-        var totalBuyTransactions = 0;
+    var totalBuyTransactions = 0;
+    $('input[name="buy_quantity"]').on('input', function (e) {
+        e.preventDefault();
+        totalBuyTransactions = 0;
         // var price = $(this).closest('tr').find('td:nth-child(3)').text();
         // var buyQuantity = $(this).val();
         // var brokerage = $(this).closest('tr').find('td:nth-child(8)').text();
@@ -216,11 +219,10 @@ $(document).ready(function () {
         });
     }, 10000);  // 10000 milliseconds = 10 seconds
 
-
-
+    $('#order_confirmation').modal({ backdrop: 'static', keyboard: false });
     $('#myForm').submit(function (e) {
         e.preventDefault();
-
+        orders = [];
         var counter = 0;
         $('#myTable tr').each(function () {
             var row = $(this);
@@ -266,10 +268,13 @@ $(document).ready(function () {
                     <tr>
                         <td>${item.company_name}</td>
                         <td>${item.buy_quantity}</td>
+                        <td>${item.buy_value}</td>
                         <td>${item.sell_quantity}</td>
+                        <td>${item.sell_value}</td>
                     </tr>
                 `);
             });
+            $('.order_total').text(totalBuyTransactions.toFixed(2));
             $('#order_confirmation').modal('show');
             $('#order_confirmation').removeClass('hidden').addClass('shown');
 

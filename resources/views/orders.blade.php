@@ -55,7 +55,7 @@
                 <h3 style="text-align:center" id="active_round_name">{{$active_round_display_name}}</h3>
                 <form id="myForm">
                     @csrf
-                    <table>
+                    <table style="font-size: medium;">
                         <thead>
                             <tr>
                                 <th>Company ID</th>
