@@ -21,20 +21,20 @@
             <div class="row">
                 <div class="col-2">
                     <label>Select a Broker House:</label><br />
-                    <div class="btn-group dropup">
+                    <div class="dropdown">
                         <button type="button" class="btn btn-dark dropdown-toggle" id="broker-btn" data-bs-toggle="dropdown" aria-expanded="false">
                             Broker House
                         </button>
                         <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownMenuButton">
                             @foreach($broker_houses as $key => $data)
-                            <li><a class="brokerSelection border-radius-md" href="javascript:;" id="{{$data->id}}" charges="{{$data->charges}}">{{$data->broker_name }}</a></li>
+                            <li><a class="brokerSelection border-radius-md dropdown-item" href="javascript:;" id="{{$data->id}}" charges="{{$data->charges}}">{{$data->broker_name }}</a></li>
                             @endforeach
                         </ul>
                     </div>
                 </div>
                 <div class="col-4 team-dropdown hidden">
                     <label>Select a Team:</label><br />
-                    <div class="btn-group dropup">
+                    <div class="dropdown">
                         <button type="button" class="btn btn-dark dropdown-toggle" id="team-btn" data-bs-toggle="dropdown" aria-expanded="false">
                             Teams
                         </button>

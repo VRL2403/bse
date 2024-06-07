@@ -21,13 +21,13 @@
             <div class="row">
                 <div class="col-2">
                     <label>Select a Team:</label><br />
-                    <div class="btn-group dropup">
+                    <div class="dropdown">
                         <button type="button" class="btn btn-dark dropdown-toggle" id="team-btn" data-bs-toggle="dropdown" aria-expanded="false">
                             Teams
                         </button>
                         <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownMenuButton">
                             @foreach($teams as $key => $data)
-                            <li><a class="teamSelection border-radius-md" href="javascript:;" id="{{$data->id}}">{{$data->team_name }}</a></li>
+                            <li><a class="teamSelection dropdown-item" href="javascript:;" id="{{$data->id}}">{{$data->team_name }}</a></li>
                             @endforeach
                         </ul>
                     </div>

@@ -51,7 +51,7 @@ $(document).ready(function () {
                 $('#selectedTeam').empty();
                 if (res['data'].length > 0) {
                     $.each(res['data'], function (index, item) {
-                        $('#selectedTeam').append(`<li><a class="teamSelection border-radius-md" href="javascript:;" id=` + item['id'] + `>` + item['team_name'] + `</a></li>`);
+                        $('#selectedTeam').append(`<li><a class="teamSelection dropdown-item" href="javascript:;" id=` + item['id'] + `>` + item['team_name'] + `</a></li>`);
                         $('#broker-btn').prop('disabled', true);
                     });
                     $(".team-dropdown").removeClass("hidden");

@@ -26,13 +26,13 @@
                 <h3>Set Active Round</h3>
                 <div class="row">
                     <div class="col-4">
-                        <div class="btn-group dropup">
+                        <div class="dropdown">
                             <button type="button" class="btn btn-dark dropdown-toggle" id="rounds-btn" data-bs-toggle="dropdown" aria-expanded="false">
                                 Rounds
                             </button>
                             <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownMenuButton">
                                 @foreach($rounds as $key => $data)
-                                <li><a class="round border-radius-md" href="javascript:;" id="{{$data->id}}">{{$data->round_name }}</a></li>
+                                <li><a class="round dropdown-item" href="javascript:;" id="{{$data->id}}">{{$data->round_name }}</a></li>
                                 @endforeach
                             </ul>
                         </div>
