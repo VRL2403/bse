@@ -10,6 +10,6 @@ return [
         'round_five_price' => 300000,
         'round_six_price' => 300000,
         'round_seven_price' => 300000,
-        'closing_bell_price' => 300000
+        'closing_bell_round' => 300000
     ],
 ];

@@ -25,6 +25,7 @@
                             <th>Team Name</th>
                             <th>Cash Ledger</th>
                             <th>Portfolio Value</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -33,6 +34,7 @@
                             <td>{{$data->TeamName}}</td>
                             <td>{{ $data->CashLedger }}</td>
                             <td>{{ $data->PortfolioValue }}</td>
+                            <td>{{ $data->Total }}</td>
                         </tr>
                         @endforeach
                     </tbody>

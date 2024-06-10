@@ -98,7 +98,7 @@ class StatsController extends Controller
     public function ledger(Request $request)
     {
         $active_round = DB::table("active_round")->where('status', 1)->pluck('round_name')->first();
-        $teamsData = DB::select("SELECT t.team_name AS TeamName, cl.cash_in_hand  AS CashLedger, SUM(l.quantity * c." . $active_round . ") AS PortfolioValue FROM teams t JOIN ledger l ON t.id = l.team_id JOIN companies c ON l.company_id = c.id JOIN cash_ledger cl ON t.id = cl.team_id GROUP BY t.team_name, cl.cash_in_hand;");
+        $teamsData = DB::select("SELECT t.team_name AS TeamName, cl.cash_in_hand  AS CashLedger, SUM(l.quantity * c." . $active_round . ") AS PortfolioValue, (cl.cash_in_hand + SUM(l.quantity * c." . $active_round . ")) AS Total FROM teams t JOIN ledger l ON t.id = l.team_id JOIN companies c ON l.company_id = c.id JOIN cash_ledger cl ON t.id = cl.team_id GROUP BY t.team_name, cl.cash_in_hand;");
 
         return view('stats', compact('teamsData'));
     }

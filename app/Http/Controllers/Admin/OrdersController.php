@@ -41,7 +41,7 @@ class OrdersController extends Controller
         $limit_flag = DB::table("active_round")->where('status', 1)->pluck('limit_flag')->first();
         $amount_alloted = Config::get('constants.ROUND_LIMITS')[$active_round];
         $active_round_id = DB::table("active_round")->where('status', 1)->pluck('id')->first();
-        $amount_used = Orders::select('team_id', \DB::raw('SUM(buy_value + brokerage) as sum_of_total'))
+        $amount_used = Orders::select('team_id', \DB::raw('SUM(buy_value) as sum_of_total'))
             ->where('round_id', $active_round_id)
             ->groupBy('team_id')
             ->get()->toArray();
