@@ -183,7 +183,7 @@ $(document).ready(function () {
                 if (isNaN(sellQuantity)) {
                     sellQuantity = 0;
                 }
-                totalBuyTransactions += (price * buyQuantity) + (((price * buyQuantity) + (price * sellQuantity)) * charges);
+                totalBuyTransactions += (price * buyQuantity);
             }
         });
         console.log(totalBuyTransactions);
@@ -282,6 +282,7 @@ $(document).ready(function () {
     });
 
     $('#confirm_and_place').on('click', function (e) {
+        $("#confirm_and_place").addClass('hidden');
         $.ajax({
             url: '/admin/save_order',
             type: 'POST',
