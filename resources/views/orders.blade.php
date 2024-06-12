@@ -44,7 +44,7 @@
                     </div>
                 </div>
                 <div class="col-2 team-dropdown hidden">
-                    <label>Round Limit: {{$round_limit}}</label><br />
+                    <label>Round Limit: {{$amount_alloted}}</label><br />
                     <label id="limit_used">Limit Used: 0</label><br />
                 </div>
             </div>
