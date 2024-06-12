@@ -61,7 +61,7 @@ class OrdersController extends Controller
         }
         $companies = Companies::where('status', 1)->select('id', 'company_name', $active_round . ' as price')->get();
         $active_round_display_name = $this->formatString($active_round);
-        return view('orders', compact('broker_houses', 'companies', 'active_round_display_name', 'active_round_id', 'amount_used', 'limit_flag', 'cash_available', 'round_limit'));
+        return view('orders', compact('broker_houses', 'companies', 'active_round_display_name', 'active_round_id', 'amount_used', 'limit_flag', 'cash_available'));
     }
 
     public function teamsTagged(Request $request)
