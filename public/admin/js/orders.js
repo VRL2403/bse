@@ -110,7 +110,6 @@ $(document).ready(function () {
         var row = $(this).closest('tr');
         var price = parseFloat(row.find('td:nth-child(3)').text());
         var charges = $('#brokerage_value').text();
-        console.log('charges', charges)
         var buyQuantity = parseInt(row.find('.buy-quantity').val());
         var sellQuantity = parseInt(row.find('.sell-quantity').val());
 
@@ -144,6 +143,7 @@ $(document).ready(function () {
 
 
     var totalBuyTransactions = 0;
+    var buyAmount = 0;
     $('input[name="buy_quantity"]').on('input', function (e) {
         e.preventDefault();
         totalBuyTransactions = 0;
@@ -183,12 +183,13 @@ $(document).ready(function () {
                 if (isNaN(sellQuantity)) {
                     sellQuantity = 0;
                 }
-                totalBuyTransactions += (price * buyQuantity);
+                buyAmount += (price * buyQuantity);
+                totalBuyTransactions += (price * buyQuantity) + (((price * buyQuantity) + (price * sellQuantity)) * charges);
             }
         });
         console.log(totalBuyTransactions);
         // Check if the overall buy transactions are less than 100
-        if (totalBuyTransactions < amount) {
+        if (buyAmount < amount) {
             console.log("Total buy transactions are less than 10 Lakhs.");
         } else {
             alert('Round Buying Limit Exceed');
@@ -271,6 +272,7 @@ $(document).ready(function () {
                         <td>${item.buy_value}</td>
                         <td>${item.sell_quantity}</td>
                         <td>${item.sell_value}</td>
+                        <td>${item.brokerage}</td>
                     </tr>
                 `);
             });

@@ -21,6 +21,7 @@
                                 <th>Buy Value</th>
                                 <th>Sell Quantity</th>
                                 <th>Sell Value</th>
+                                <th>Brokerage</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -39,7 +39,7 @@ class OrdersController extends Controller
             ->get();
         $active_round = DB::table("active_round")->where('status', 1)->pluck('round_name')->first();
         $limit_flag = DB::table("active_round")->where('status', 1)->pluck('limit_flag')->first();
-        $amount_alloted = Config::get('constants.ROUND_LIMITS')[$active_round];
+        $amount_alloted = DB::table("active_round")->where('status', 1)->where('limit_flag', 1)->pluck('round_limit')->first();
         $active_round_id = DB::table("active_round")->where('status', 1)->pluck('id')->first();
         $amount_used = Orders::select('team_id', \DB::raw('SUM(buy_value) as sum_of_total'))
             ->where('round_id', $active_round_id)
@@ -61,7 +61,7 @@ class OrdersController extends Controller
         }
         $companies = Companies::where('status', 1)->select('id', 'company_name', $active_round . ' as price')->get();
         $active_round_display_name = $this->formatString($active_round);
-        return view('orders', compact('broker_houses', 'companies', 'active_round_display_name', 'active_round_id', 'amount_used', 'amount_alloted', 'limit_flag', 'cash_available'));
+        return view('orders', compact('broker_houses', 'companies', 'active_round_display_name', 'active_round_id', 'amount_used', 'limit_flag', 'cash_available', 'round_limit'));
     }
 
     public function teamsTagged(Request $request)

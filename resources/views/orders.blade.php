@@ -32,6 +32,7 @@
                         </ul>
                     </div>
                 </div>
+                
                 <div class="col-4 team-dropdown hidden">
                     <label>Select a Team:</label><br />
                     <div class="dropdown">
@@ -41,6 +42,10 @@
                         <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownMenuButton" id="selectedTeam">
                         </ul>
                     </div>
+                </div>
+                <div class="col-2 team-dropdown hidden">
+                    <label>Round Limit: {{$round_limit}}</label><br />
+                    <label id="limit_used">Limit Used: 0</label><br />
                 </div>
             </div>
             <div class="row orderForm hidden">
