@@ -67,6 +67,21 @@ $(document).ready(function () {
         $('#team-btn').text(selectedValueName);
         if (selectedValue.length > 0) {
             $(".orderForm").removeClass("hidden");
+            $(".round-info").removeClass("hidden")
+        }
+        var cash_available = JSON.parse($('#cash_available').text());
+        if (!jQuery.isEmptyObject(cash_available)) {
+            console.log('HEREW....');
+            for (var i = 0; i < cash_available.length; i++) {
+                if (cash_available[i]['team_id'] === parseInt($('#team').text())) {
+                    $("#cash_in_hand").html(cash_available[i]['cash_in_hand']);
+                    $("#order_past_cash_in_hand").html(cash_available[i]['cash_in_hand']);
+                }
+            }
+        } else {
+            console.log('TRJEEREW....');
+            $("#cash_in_hand").html(2000000);
+            $("#order_past_cash_in_hand").html(2000000);
         }
     });
 
@@ -76,7 +91,7 @@ $(document).ready(function () {
         var companyId = $(this).closest('tr').find('td:first').text();
         var sellQuantity = $(this).val();
         teamId = $('#team').text();
-        if (sellQuantity.toString().length > 0) {
+        if (sellQuantity.toString().length > 0 & sellQuantity != 0) {
             $.ajax({
                 url: '/admin/check_sell_quantity',
                 type: 'POST',
@@ -93,6 +108,8 @@ $(document).ready(function () {
                     response = $.parseJSON(response);
                     if (response['message'] != "") {
                         row.find('.message').text(response['message']);
+                    } else {
+                        row.find('.message').text("");
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -147,8 +164,10 @@ $(document).ready(function () {
     $('input[name="buy_quantity"]').on('input', function (e) {
         e.preventDefault();
         totalBuyTransactions = 0;
+        buyAmount = 0;
         // var price = $(this).closest('tr').find('td:nth-child(3)').text();
-        // var buyQuantity = $(this).val();
+        var buyInput = $(this);
+        var buyInputVal = $(this).val();
         // var brokerage = $(this).closest('tr').find('td:nth-child(8)').text();
         var limit_flag = $('#limit_flag').text();
         if (limit_flag == 1 | limit_flag == '1') {
@@ -177,6 +196,7 @@ $(document).ready(function () {
             charges = parseFloat(charges) / 100;
             // If the quantity is greater than 0, add the order to the array
             if (buyQuantity > 0 || sellQuantity > 0) {
+                console.log('HHHHH', buyQuantity, sellQuantity);
                 if (isNaN(buyQuantity)) {
                     buyQuantity = 0;
                 }
@@ -184,19 +204,24 @@ $(document).ready(function () {
                     sellQuantity = 0;
                 }
                 buyAmount += (price * buyQuantity);
+                console.log(price, buyQuantity, price * buyQuantity);
                 totalBuyTransactions += (price * buyQuantity) + (((price * buyQuantity) + (price * sellQuantity)) * charges);
             }
         });
+        console.log('out', buyAmount);
+        $('#limit_used').text(buyAmount);
         console.log(totalBuyTransactions);
+        var cash = $("#cash_in_hand").text();
+        $("#order_past_cash_in_hand").text(cash - totalBuyTransactions);
         // Check if the overall buy transactions are less than 100
-        if (buyAmount < amount) {
+        if (buyAmount <= amount) {
             console.log("Total buy transactions are less than 10 Lakhs.");
         } else {
             alert('Round Buying Limit Exceed');
-            $('#submit-orders').prop('disabled', true);
+            buyInput.val(buyInputVal.slice(0, -1)).trigger('input');
+            // $('#submit-orders').prop('disabled', true);
             console.log("Total buy transactions are not less than 10 Lakhs.");
         }
-        $('#limit_used').text(buyAmount);
     });
 
     // Save a value in the browser session

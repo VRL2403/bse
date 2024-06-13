@@ -32,7 +32,7 @@
                         </ul>
                     </div>
                 </div>
-                
+
                 <div class="col-4 team-dropdown hidden">
                     <label>Select a Team:</label><br />
                     <div class="dropdown">
@@ -43,10 +43,13 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-2 team-dropdown hidden">
-                    <label>Round Limit: {{$amount_alloted}}</label>
-                    <label>Cash In Hand: {{$cash_available}}</label>
-                    <label>Limit Used: (But Amount)</label><label id="limit_used"></label>
+                <div class="col-2">
+                </div>
+                <div class="col-4 round-info hidden">
+                    <label>Round Limit: {{$amount_alloted}}</label><br />
+                    <label>Cash In Hand:</label><label id="cash_in_hand"></label><br />
+                    <label>Limit Used (Buy Amount):</label><label id="limit_used">0</label><br />
+                    <label>Cash In Hand After Order Execution:</label><label id="order_past_cash_in_hand"></label>
                 </div>
             </div>
             <div class="row orderForm hidden">
