@@ -44,8 +44,9 @@
                     </div>
                 </div>
                 <div class="col-2 team-dropdown hidden">
-                    <label>Round Limit: {{$amount_alloted}}</label><br />
-                    <label id="limit_used">Limit Used: 0</label><br />
+                    <label>Round Limit: {{$amount_alloted}}</label>
+                    <label>Cash In Hand: {{$cash_available}}</label>
+                    <label>Limit Used: (But Amount)</label><label id="limit_used"></label>
                 </div>
             </div>
             <div class="row orderForm hidden">

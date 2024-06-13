@@ -196,6 +196,7 @@ $(document).ready(function () {
             $('#submit-orders').prop('disabled', true);
             console.log("Total buy transactions are not less than 10 Lakhs.");
         }
+        $('#limit_used').text(buyAmount);
     });
 
     // Save a value in the browser session

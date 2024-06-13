@@ -1,6 +1,6 @@
 <!-- modal.blade.php -->
 <div class="modal fade hidden" id="order_confirmation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg" role="document" style="--bs-modal-width: 60rem !important">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Please Confirm the Order:</h5>
