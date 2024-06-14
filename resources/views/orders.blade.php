@@ -19,7 +19,7 @@
         <x-app.navbar />
         <div class="container-fluid py-4 px-5">
             <div class="row">
-                <div class="col-2">
+                <div class="col-3">
                     <label>Select a Broker House:</label><br />
                     <div class="dropdown">
                         <button type="button" class="btn btn-dark dropdown-toggle" id="broker-btn" data-bs-toggle="dropdown" aria-expanded="false">
@@ -33,7 +33,7 @@
                     </div>
                 </div>
 
-                <div class="col-4 team-dropdown hidden">
+                <div class="col-3 team-dropdown hidden">
                     <label>Select a Team:</label><br />
                     <div class="dropdown">
                         <button type="button" class="btn btn-dark dropdown-toggle" id="team-btn" data-bs-toggle="dropdown" aria-expanded="false">
