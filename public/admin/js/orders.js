@@ -210,6 +210,7 @@ $(document).ready(function () {
                 }
             }
         }
+        amount = 300000;
         console.log('HEEEEEEEEE', amount);
         // var cash = $("#cash_in_hand").text();
         // $("#order_past_cash_in_hand").text(cash - totalBuyTransactions);
