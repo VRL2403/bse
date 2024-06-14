@@ -144,6 +144,7 @@ $(document).ready(function () {
     $('.buy-quantity, .sell-quantity').on('input', function () {
         var buyInput = $(this);
         var buyInputVal = $(this).val();
+        buyAmount = 0;
         var row = $(this).closest('tr');
         var price = parseFloat(row.find('td:nth-child(3)').text());
         var charges = $('#brokerage_value').text();
@@ -212,6 +213,7 @@ $(document).ready(function () {
         }
         amount = 300000;
         console.log('HEEEEEEEEE', amount);
+        console.log(buyAmount, 'tyuio');
         // var cash = $("#cash_in_hand").text();
         // $("#order_past_cash_in_hand").text(cash - totalBuyTransactions);
         // Check if the overall buy transactions are less than 100
