@@ -199,7 +199,7 @@ $(document).ready(function () {
         if (limit_flag == 1 | limit_flag == '1') {
             var amount_allocated = $('#amount_alloted').text();
             var amount_used_by_team = JSON.parse($('#amount_used').text());
-            var amount = fetchAmount(parseInt($('#team').text()), amount_used_by_team, amount_allocated);
+            var amount = amount_allocated;
         } else {
             var cash_available = JSON.parse($('#cash_available').text());
             var amount = 0;
