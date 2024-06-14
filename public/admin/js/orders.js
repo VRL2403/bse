@@ -142,6 +142,7 @@ $(document).ready(function () {
     });
 
     $('.buy-quantity, .sell-quantity').on('input', function () {
+        var buyInput = $(this);
         var row = $(this).closest('tr');
         var price = parseFloat(row.find('td:nth-child(3)').text());
         var charges = $('#brokerage_value').text();
