@@ -33,10 +33,8 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="container-fluid py-4 px-5">
             <div class="row holdingsTable hidden">
-                <table id="holdings">
+                <table id="holdings" style="font-size: medium;">
                     <thead>
                         <tr>
                             <th>Company Name</th>
@@ -49,7 +47,6 @@
                     </tbody>
                 </table>
             </div>
-        </div>
         </div>
     </main>
 

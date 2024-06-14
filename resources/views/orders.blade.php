@@ -47,9 +47,9 @@
                 </div>
                 <div class="col-4 round-info hidden">
                     <label>Round Limit: {{$amount_alloted}}</label><br />
-                    <label>Cash In Hand:</label><label id="cash_in_hand"></label><br />
-                    <label>Limit Used (Buy Amount):</label><label id="limit_used">0</label><br />
-                    <label>Cash In Hand After Order Execution:</label><label id="order_past_cash_in_hand"></label>
+                    <label>Cash In Hand: </label><label id="cash_in_hand"></label><br />
+                    <label>Limit Used: </label><label id="limit_used">0</label><br />
+                    <label class="hidden">Cash In Hand After Order Execution: </label><label id="order_past_cash_in_hand" class="hidden"></label>
                 </div>
             </div>
             <div class="row orderForm hidden">
@@ -75,12 +75,13 @@
                                 <th>Sell Quantity</th>
                                 <th>Sell Value</th>
                                 <th>Brokerage</th>
+                                <th>Quantity Owned</th>
                                 <th>Message</th>
                             </tr>
                         </thead>
-                        <tbody id="myTable">
+                        <tbody id="companiesData">
                             @foreach ($companies as $company)
-                            <tr>
+                            <tr id="company-{{ $company->id }}">
                                 <td>{{ $company->id }}</td>
                                 <td>{{ $company->company_name }}</td>
                                 <td>{{ $company->price }}</td>
@@ -89,6 +90,7 @@
                                 <td><input type="number" name="sell_quantity" min="0" class="sell-quantity"></td>
                                 <td class="sell-value" min="0"></td>
                                 <td class="brokerage-paid" min="0"></td>
+                                <td class="quantity-owned"></td>
                                 <td class="message" style="color: red;"></td>
                             </tr>
                             @endforeach

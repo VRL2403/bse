@@ -10,7 +10,6 @@ use App\Models\Ledger;
 use App\Models\Orders;
 use App\Models\TeamBrokerHousesTagging;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 use DB;
 use Config;
 
@@ -75,6 +74,20 @@ class OrdersController extends Controller
         $response['status'] = 200;
         $response['data'] = $teams_tagged;
         return json_encode($response);
+    }
+
+    public function companyTeamData(Request $request)
+    {
+        $selected_team = (int)$request->route('id');
+        $active_round = DB::table("active_round")->where('status', 1)->pluck('round_name')->first();
+        $companies = Companies::where('companies.status', 1)->select('companies.id', 'company_name', $active_round . ' as price', 'quantity')
+            ->leftJoin('ledger', function ($join) use ($selected_team) {
+                $join->on('ledger.company_id', '=', 'companies.id')
+                    ->where('ledger.status', 1)
+                    ->where('ledger.team_id', $selected_team);
+            })
+            ->get();
+        return response()->json($companies);
     }
 
     public function checkActiveRound(Request $request)

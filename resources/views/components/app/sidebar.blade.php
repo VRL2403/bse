@@ -7,7 +7,7 @@
     </div>
     <div class="collapse navbar-collapse px-4  w-auto " id="sidenav-collapse-main">
         <ul class="navbar-nav">
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link  {{ is_current_route('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                     <div class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
                         <svg width="30px" height="30px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -74,7 +74,7 @@
                     </div>
                     <span class="nav-link-text ms-1">Teams</span>
                 </a>
-            </li>
+            </li> -->
             <li class="nav-item">
                 <a class="nav-link  {{ is_current_route('orders') ? 'active' : '' }}" href="{{ route('orders') }}">
                     <div class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
@@ -92,7 +92,7 @@
                     <span class="nav-link-text ms-1">Capture Orders</span>
                 </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link  {{ is_current_route('configuration') ? 'active' : '' }}" href="{{ route('configuration') }}">
                     <div class="icon icon-shape icon-sm px-0 text-center d-flex align-items-center justify-content-center">
                         <svg width="30px" height="30px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -108,7 +108,7 @@
                     </div>
                     <span class="nav-link-text ms-1">Configuration</span>
                 </a>
-            </li>
+            </li> -->
 
             <li class="nav-item">
                 <a class="nav-link  {{ is_current_route('ledger') ? 'active' : '' }}" href="{{ route('ledger') }}">

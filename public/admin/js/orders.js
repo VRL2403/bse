@@ -63,6 +63,21 @@ $(document).ready(function () {
     $('body').on('click', '.teamSelection', function () {
         var selectedValueName = $(this).text();
         var selectedValue = $(this).attr('id');
+
+        call = '/admin/companies/team/' + selectedValue.toString();
+        $.ajax({
+            contentType: 'application/json',
+            type: 'get',
+            url: call,
+
+            success: function (response) {
+                let res = response;
+                res.forEach(item => {
+                    $('#company-' + item.id).find('.quantity-owned').html(item.quantity || 0);
+                });
+            }
+        });
+
         $('#team').text(selectedValue);
         $('#team-btn').text(selectedValueName);
         if (selectedValue.length > 0) {
@@ -71,7 +86,6 @@ $(document).ready(function () {
         }
         var cash_available = JSON.parse($('#cash_available').text());
         if (!jQuery.isEmptyObject(cash_available)) {
-            console.log('HEREW....');
             for (var i = 0; i < cash_available.length; i++) {
                 if (cash_available[i]['team_id'] === parseInt($('#team').text())) {
                     $("#cash_in_hand").html(cash_available[i]['cash_in_hand']);
@@ -79,45 +93,49 @@ $(document).ready(function () {
                 }
             }
         } else {
-            console.log('TRJEEREW....');
             $("#cash_in_hand").html(2000000);
             $("#order_past_cash_in_hand").html(2000000);
         }
     });
 
-    $('input[name="sell_quantity"]').blur(function (e) {
+    var sellAmount = 0;
+    $('input[name="sell_quantity"]').on('input', function (e) {
         e.preventDefault();
+        sellAmount = 0;
         var row = $(this).closest('tr');
-        var companyId = $(this).closest('tr').find('td:first').text();
-        var sellQuantity = $(this).val();
+        // var companyId = $(this).closest('tr').find('td:first').text();
+        var quantityOwned = parseInt($(this).closest('tr').find('td:nth-child(9)').text());
+        var sellQuantity = parseInt($(this).val());
         teamId = $('#team').text();
-        if (sellQuantity.toString().length > 0 & sellQuantity != 0) {
-            $.ajax({
-                url: '/admin/check_sell_quantity',
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                data: {
-                    team_id: teamId,
-                    company_id: companyId,
-                    sell_quantity: sellQuantity
-                },
-                success: function (response) {
-                    // handle success
-                    response = $.parseJSON(response);
-                    if (response['message'] != "") {
-                        row.find('.message').text(response['message']);
-                    } else {
-                        row.find('.message').text("");
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    // handle error
-                    console.log(textStatus, errorThrown);
-                }
-            });
+        if (sellQuantity > quantityOwned) {
+            row.find('.message').text("Error");
+        } else {
+            row.find('.message').text("");
         }
+
+        $('#companiesData tr').each(function () {
+            var row = $(this);
+            var price = parseInt(row.find('td:eq(2)').text());
+            var sellQuantity = parseInt(row.find('.sell-quantity').val());
+            var charges = $('#brokerage_value').text();
+            charges = parseFloat(charges) / 100;
+            // If the quantity is greater than 0, add the order to the array
+            if (sellQuantity > 0) {
+                if (isNaN(sellQuantity)) {
+                    sellQuantity = 0;
+                }
+                sellAmount += (price * sellQuantity);
+                // console.log(price, buyQuantity, price * buyQuantity);
+                // totalBuyTransactions += (price * buyQuantity) + (((price * buyQuantity) + (price * sellQuantity)) * charges);
+            }
+        });
+        var cash = $("#cash_in_hand").text();
+        $("#order_past_cash_in_hand").text(cash + sellAmount);
+        var limit_flag = $('#limit_flag').text();
+        if (limit_flag == 0 | limit_flag == '0') {
+            $('#limit_used').text(cash - ((sellAmount) * charges));
+        }
+
         if (sellQuantity.toString().length == 0) {
             row.find('.message').text('');
         }
@@ -148,6 +166,59 @@ $(document).ready(function () {
         } else {
         }
         row.find('.brokerage-paid').text(brokageP);
+
+        $('#companiesData tr').each(function () {
+            var row = $(this);
+            var price = parseInt(row.find('td:eq(2)').text());
+            console.log(row, price);
+            var buyQuantity = parseInt(row.find('.buy-quantity').val());
+            var sellQuantity = parseInt(row.find('.sell-quantity').val());
+            var charges = $('#brokerage_value').text();
+            charges = parseFloat(charges) / 100;
+            // If the quantity is greater than 0, add the order to the array
+            if (buyQuantity > 0 || sellQuantity > 0) {
+                console.log('HHHHH', buyQuantity, sellQuantity);
+                if (isNaN(buyQuantity)) {
+                    buyQuantity = 0;
+                }
+                if (isNaN(sellQuantity)) {
+                    sellQuantity = 0;
+                }
+                buyAmount += (price * buyQuantity);
+                console.log(price, buyQuantity, price * buyQuantity);
+                totalBuyTransactions += (price * buyQuantity) + (((price * buyQuantity) + (price * sellQuantity)) * charges);
+            }
+        });
+        if (limit_flag == 0 | limit_flag == '0') {
+            buyAmount = totalBuyTransactions;
+        }
+        console.log('out', buyAmount);
+        $('#limit_used').text(buyAmount);
+        console.log(totalBuyTransactions);
+        if (limit_flag == 1 | limit_flag == '1') {
+            var amount_allocated = $('#amount_alloted').text();
+            var amount_used_by_team = JSON.parse($('#amount_used').text());
+            var amount = fetchAmount(parseInt($('#team').text()), amount_used_by_team, amount_allocated);
+        } else {
+            var cash_available = JSON.parse($('#cash_available').text());
+            var amount = 0;
+            for (var i = 0; i < cash_available.length; i++) {
+                if (cash_available[i]['team_id'] === parseInt($('#team').text())) {
+                    amount = cash_available[i]['cash_in_hand'];
+                }
+            }
+        }
+        // var cash = $("#cash_in_hand").text();
+        // $("#order_past_cash_in_hand").text(cash - totalBuyTransactions);
+        // Check if the overall buy transactions are less than 100
+        if (buyAmount <= amount) {
+            console.log("Total buy transactions are less than 10 Lakhs.");
+        } else {
+            alert('Round Buying Limit Exceed');
+            buyInput.val(buyInputVal.slice(0, -1)).trigger('input');
+            // $('#submit-orders').prop('disabled', true);
+            console.log("Total buy transactions are not less than 10 Lakhs.");
+        }
     });
 
     $('.buy-quantity, .sell-quantity').keypress(function (e) {
@@ -183,45 +254,6 @@ $(document).ready(function () {
                 }
             }
         }
-        // // Calculate the total buy transactions
-        // totalBuyTransactions += (price * buyQuantity) + brokerage;
-
-
-        $('#myTable tr').each(function () {
-            var row = $(this);
-            var price = parseInt(row.find('td:eq(2)').text());
-            var buyQuantity = parseInt(row.find('.buy-quantity').val());
-            var sellQuantity = parseInt(row.find('.sell-quantity').val());
-            var charges = $('#brokerage_value').text();
-            charges = parseFloat(charges) / 100;
-            // If the quantity is greater than 0, add the order to the array
-            if (buyQuantity > 0 || sellQuantity > 0) {
-                console.log('HHHHH', buyQuantity, sellQuantity);
-                if (isNaN(buyQuantity)) {
-                    buyQuantity = 0;
-                }
-                if (isNaN(sellQuantity)) {
-                    sellQuantity = 0;
-                }
-                buyAmount += (price * buyQuantity);
-                console.log(price, buyQuantity, price * buyQuantity);
-                totalBuyTransactions += (price * buyQuantity) + (((price * buyQuantity) + (price * sellQuantity)) * charges);
-            }
-        });
-        console.log('out', buyAmount);
-        $('#limit_used').text(buyAmount);
-        console.log(totalBuyTransactions);
-        var cash = $("#cash_in_hand").text();
-        $("#order_past_cash_in_hand").text(cash - totalBuyTransactions);
-        // Check if the overall buy transactions are less than 100
-        if (buyAmount <= amount) {
-            console.log("Total buy transactions are less than 10 Lakhs.");
-        } else {
-            alert('Round Buying Limit Exceed');
-            buyInput.val(buyInputVal.slice(0, -1)).trigger('input');
-            // $('#submit-orders').prop('disabled', true);
-            console.log("Total buy transactions are not less than 10 Lakhs.");
-        }
     });
 
     // Save a value in the browser session
@@ -251,7 +283,7 @@ $(document).ready(function () {
         e.preventDefault();
         orders = [];
         var counter = 0;
-        $('#myTable tr').each(function () {
+        $('#companiesData tr').each(function () {
             var row = $(this);
             var price = parseInt(row.find('td:eq(2)').text());
             var buyQuantity = parseInt(row.find('.buy-quantity').val());
@@ -298,7 +330,7 @@ $(document).ready(function () {
                         <td>${item.buy_value}</td>
                         <td>${item.sell_quantity}</td>
                         <td>${item.sell_value}</td>
-                        <td>${item.brokerage}</td>
+                        <td>${item.brokerage.toFixed(2)}</td>
                     </tr>
                 `);
             });
@@ -323,7 +355,7 @@ $(document).ready(function () {
             success: function (response) {
                 // handle success
                 $('#myForm')[0].reset();
-                $('#myTable tr').each(function () {
+                $('#companiesData tr').each(function () {
                     // This will clear the second and third column of each row
                     $(this).find('td:eq(4), td:eq(6), td:eq(7), td:eq(8)').html('');
 
@@ -343,7 +375,7 @@ $(document).ready(function () {
     // Function to check if any input has a non-zero value
     function checkInputs() {
         var hasNonZero = false;
-        $('#myTable input').each(function () {
+        $('#companiesData input').each(function () {
             if ($(this).val() != 0 && $(this).val() != '') {
                 hasNonZero = true;
                 return false;  // Break out of .each() loop
@@ -353,7 +385,7 @@ $(document).ready(function () {
     }
 
     // Event handler for input change and focusout events
-    $('#myTable input').on('change focusout', function () {
+    $('#companiesData input').on('change focusout', function () {
         if (checkInputs()) {
             // If any input has a non-zero value, enable the submit button
             $('#submit-orders').prop('disabled', false);
@@ -364,7 +396,7 @@ $(document).ready(function () {
     });
 
     // Event handler for input focusin event
-    $('#myTable input').on('focusin', function () {
+    $('#companiesData input').on('focusin', function () {
         // Disable the submit button when an input field is in focus
         $('#submit-orders').prop('disabled', true);
     });
