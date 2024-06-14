@@ -172,7 +172,6 @@ $(document).ready(function () {
         $('#companiesData tr').each(function () {
             var row = $(this);
             var price = parseInt(row.find('td:eq(2)').text());
-            console.log(row, price);
             var buyQuantity = parseInt(row.find('.buy-quantity').val());
             var sellQuantity = parseInt(row.find('.sell-quantity').val());
             var charges = $('#brokerage_value').text();
@@ -210,6 +209,7 @@ $(document).ready(function () {
                 }
             }
         }
+        console.log('HEEEEEEEEE', amount);
         // var cash = $("#cash_in_hand").text();
         // $("#order_past_cash_in_hand").text(cash - totalBuyTransactions);
         // Check if the overall buy transactions are less than 100
