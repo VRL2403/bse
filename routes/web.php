@@ -49,6 +49,7 @@ Route::get('/admin/ledger', 'App\Http\Controllers\Admin\StatsController@ledger')
 Route::get('/admin/holdings', 'App\Http\Controllers\Admin\StatsController@holdings')->name('holdings');
 Route::get('/admin/holdings/{id?}', 'App\Http\Controllers\Admin\StatsController@teamHoldings');
 Route::get('/admin/reset_game', 'App\Http\Controllers\Admin\StatsController@resetGame');
+Route::post('/admin/submit-dividend', 'App\Http\Controllers\Admin\StatsController@submitDivident');
 
 
 Route::get('/admin/users', 'App\Http\Controllers\Admin\UsersController@user_list');

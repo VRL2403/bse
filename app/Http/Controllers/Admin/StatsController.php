@@ -34,7 +34,8 @@ class StatsController extends Controller
         $rounds = DB::table("active_round")->select('id', 'round_name')->get()->toArray();
         $active_round = DB::table("active_round")->where('status', 1)->pluck('round_name')->first();
         $active_round_display_name = $this->formatString($active_round);
-        return view('config', compact('rounds', 'active_round_display_name'));
+        $companies = Companies::where('status', 1)->select('id', 'company_name')->get()->toArray();
+        return view('config', compact('rounds', 'active_round_display_name', 'companies'));
     }
 
     public function calculateStats(Request $request)
@@ -100,8 +101,8 @@ class StatsController extends Controller
         $active_round = DB::table("active_round")->where('status', 1)->pluck('round_name')->first();
         $teamsData = DB::select('SELECT t.team_name AS TeamName,
                     ROUND(cl.cash_in_hand,2)  AS CashLedger,
-                    ROUND(SUM(l.quantity * c.opening_bell_price),2) AS PortfolioValue,
-                    ROUND((cl.cash_in_hand + SUM(l.quantity * c.opening_bell_price)),2) AS Total
+                    ROUND(SUM(l.quantity * c.' . $active_round . '),2) AS PortfolioValue,
+                    ROUND((cl.cash_in_hand + SUM(l.quantity * c.' . $active_round . ')),2) AS Total
                     FROM teams t
                     JOIN ledger l ON t.id = l.team_id
                     JOIN companies c ON l.company_id = c.id
@@ -134,5 +135,22 @@ class StatsController extends Controller
         DB::table('active_round')->update(['status' => 0]);
         DB::table('active_round')->where('id', 1)->update(['status' => 1]);
         return response()->json(['message' => 'Game reset successfully.']);
+    }
+
+    public function submitDivident(Request $request)
+    {
+        $company_id = $request->input('company_id');
+        $dividend = $request->input('dividend');
+        // Find teams holding the company's shares
+        $holdings = Ledger::where('company_id', $company_id)->get();
+        foreach ($holdings as $holding) {
+            // Calculate the total dividend
+            $totalDividend = round($holding->quantity * $dividend, 2);
+            // Update the cash ledger for the team
+            CashLedger::where('team_id', $holding->team_id)
+                ->increment('cash_in_hand', $totalDividend);
+        }
+
+        return response()->json(['message' => 'Dividend distributed successfully']);
     }
 }

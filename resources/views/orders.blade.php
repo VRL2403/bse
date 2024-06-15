@@ -46,7 +46,7 @@
                 <div class="col-2">
                 </div>
                 <div class="col-4 round-info hidden">
-                    <label>Round Limit: {{$amount_alloted}}</label><br />
+                    <label>Round Limit:</label><label id="amount_can_be_used"></label><br />
                     <label>Cash In Hand: </label><label id="cash_in_hand"></label><br />
                     <label>Limit Used: </label><label id="limit_used">0</label><br />
                     <label class="hidden">Cash In Hand After Order Execution: </label><label id="order_past_cash_in_hand" class="hidden"></label>

@@ -9,7 +9,8 @@ $(document).ready(function () {
         }
     });
     var orders = [];
-    var teamId;
+    var totalBuyTransactions = 0;
+    var buyAmount = 0;
 
     $(document).ready(function () {
         var broker_id = sessionStorage.getItem("broker_id");
@@ -60,6 +61,7 @@ $(document).ready(function () {
         });
     });
 
+
     $('body').on('click', '.teamSelection', function () {
         var selectedValueName = $(this).text();
         var selectedValue = $(this).attr('id');
@@ -84,11 +86,28 @@ $(document).ready(function () {
             $(".orderForm").removeClass("hidden");
             $(".round-info").removeClass("hidden")
         }
+        var amount = 0;
+        var limit_flag = $('#limit_flag').text();
+        if (limit_flag == 1 | limit_flag == '1') {
+            var amount_allocated = $('#amount_alloted').text();
+            var amount_used_by_team = JSON.parse($('#amount_used').text());
+            amount = fetchAmount(parseInt($('#team').text()), amount_used_by_team, amount_allocated);
+            $('#amount_can_be_used').text(amount.toFixed(2));
+        } else {
+            var cash_available = JSON.parse($('#cash_available').text());
+            var amount = 0;
+            for (var i = 0; i < cash_available.length; i++) {
+                if (cash_available[i]['team_id'] === parseInt($('#team').text())) {
+                    amount = cash_available[i]['cash_in_hand'];
+                }
+            }
+            $('#amount_can_be_used').text(amount.toFixed(2));
+        }
         var cash_available = JSON.parse($('#cash_available').text());
         if (!jQuery.isEmptyObject(cash_available)) {
             for (var i = 0; i < cash_available.length; i++) {
                 if (cash_available[i]['team_id'] === parseInt($('#team').text())) {
-                    $("#cash_in_hand").html(cash_available[i]['cash_in_hand']);
+                    $("#cash_in_hand").html(cash_available[i]['cash_in_hand'].toFixed(2));
                     $("#order_past_cash_in_hand").html(cash_available[i]['cash_in_hand']);
                 }
             }
@@ -113,29 +132,6 @@ $(document).ready(function () {
             row.find('.message').text("");
         }
 
-        $('#companiesData tr').each(function () {
-            var row = $(this);
-            var price = parseInt(row.find('td:eq(2)').text());
-            var sellQuantity = parseInt(row.find('.sell-quantity').val());
-            var charges = $('#brokerage_value').text();
-            charges = parseFloat(charges) / 100;
-            // If the quantity is greater than 0, add the order to the array
-            if (sellQuantity > 0) {
-                if (isNaN(sellQuantity)) {
-                    sellQuantity = 0;
-                }
-                sellAmount += (price * sellQuantity);
-                // console.log(price, buyQuantity, price * buyQuantity);
-                // totalBuyTransactions += (price * buyQuantity) + (((price * buyQuantity) + (price * sellQuantity)) * charges);
-            }
-        });
-        var cash = $("#cash_in_hand").text();
-        $("#order_past_cash_in_hand").text(cash + sellAmount);
-        var limit_flag = $('#limit_flag').text();
-        if (limit_flag == 0 | limit_flag == '0') {
-            $('#limit_used').text(cash - ((sellAmount) * charges));
-        }
-
         if (sellQuantity.toString().length == 0) {
             row.find('.message').text('');
         }
@@ -145,6 +141,7 @@ $(document).ready(function () {
         var buyInput = $(this);
         var buyInputVal = $(this).val();
         buyAmount = 0;
+        totalBuyTransactions = 0;
         var row = $(this).closest('tr');
         var price = parseFloat(row.find('td:nth-child(3)').text());
         var charges = $('#brokerage_value').text();
@@ -191,17 +188,18 @@ $(document).ready(function () {
                 totalBuyTransactions += (price * buyQuantity) + (((price * buyQuantity) + (price * sellQuantity)) * charges);
             }
         });
-        if (limit_flag == 0 | limit_flag == '0') {
+        if (limit_flag == 0 | limit_flag == '0' | limit_flag == undefined) {
             buyAmount = totalBuyTransactions;
         }
-        console.log('out', buyAmount);
-        $('#limit_used').text(buyAmount);
+        $('#limit_used').text(buyAmount.toFixed(2));
         console.log(totalBuyTransactions);
         var amount = 0;
+        var limit_flag = $('#limit_flag').text();
         if (limit_flag == 1 | limit_flag == '1') {
             var amount_allocated = $('#amount_alloted').text();
             var amount_used_by_team = JSON.parse($('#amount_used').text());
-            amount = amount_allocated;
+            amount = fetchAmount(parseInt($('#team').text()), amount_used_by_team, amount_allocated);
+            console.log(amount);
         } else {
             var cash_available = JSON.parse($('#cash_available').text());
             var amount = 0;
@@ -211,9 +209,6 @@ $(document).ready(function () {
                 }
             }
         }
-        amount = 300000;
-        console.log('HEEEEEEEEE', amount);
-        console.log(buyAmount, 'tyuio');
         // var cash = $("#cash_in_hand").text();
         // $("#order_past_cash_in_hand").text(cash - totalBuyTransactions);
         // Check if the overall buy transactions are less than 100
@@ -236,31 +231,29 @@ $(document).ready(function () {
     });
 
 
-    var totalBuyTransactions = 0;
-    var buyAmount = 0;
-    $('input[name="buy_quantity"]').on('input', function (e) {
-        e.preventDefault();
-        totalBuyTransactions = 0;
-        buyAmount = 0;
-        // var price = $(this).closest('tr').find('td:nth-child(3)').text();
-        var buyInput = $(this);
-        var buyInputVal = $(this).val();
-        // var brokerage = $(this).closest('tr').find('td:nth-child(8)').text();
-        var limit_flag = $('#limit_flag').text();
-        if (limit_flag == 1 | limit_flag == '1') {
-            var amount_allocated = $('#amount_alloted').text();
-            var amount_used_by_team = JSON.parse($('#amount_used').text());
-            var amount = fetchAmount(parseInt($('#team').text()), amount_used_by_team, amount_allocated);
-        } else {
-            var cash_available = JSON.parse($('#cash_available').text());
-            var amount = 0;
-            for (var i = 0; i < cash_available.length; i++) {
-                if (cash_available[i]['team_id'] === parseInt($('#team').text())) {
-                    amount = cash_available[i]['cash_in_hand'];
-                }
-            }
-        }
-    });
+
+    // $('input[name="buy_quantity"]').on('input', function (e) {
+    //     e.preventDefault();
+    //     buyAmount = 0;
+    //     // var price = $(this).closest('tr').find('td:nth-child(3)').text();
+    //     var buyInput = $(this);
+    //     var buyInputVal = $(this).val();
+    //     // var brokerage = $(this).closest('tr').find('td:nth-child(8)').text();
+    //     var limit_flag = $('#limit_flag').text();
+    //     if (limit_flag == 1 | limit_flag == '1') {
+    //         var amount_allocated = $('#amount_alloted').text();
+    //         var amount_used_by_team = JSON.parse($('#amount_used').text());
+    //         var amount = fetchAmount(parseInt($('#team').text()), amount_used_by_team, amount_allocated);
+    //     } else {
+    //         var cash_available = JSON.parse($('#cash_available').text());
+    //         var amount = 0;
+    //         for (var i = 0; i < cash_available.length; i++) {
+    //             if (cash_available[i]['team_id'] === parseInt($('#team').text())) {
+    //                 amount = cash_available[i]['cash_in_hand'];
+    //             }
+    //         }
+    //     }
+    // });
 
     // Save a value in the browser session
     sessionStorage.setItem('active_round', $("#active_round").text());
@@ -317,7 +310,7 @@ $(document).ready(function () {
                     sell_quantity: sellQuantity,
                     buy_value: price * buyQuantity,
                     sell_value: price * sellQuantity,
-                    brokerage: (((price * buyQuantity) + (price * sellQuantity)) * charges),
+                    brokerage: (((price * buyQuantity) + (price * sellQuantity)) * charges).toFixed(2),
                 };
                 orders.push(order);
             }

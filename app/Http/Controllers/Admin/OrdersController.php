@@ -40,10 +40,17 @@ class OrdersController extends Controller
         $limit_flag = DB::table("active_round")->where('status', 1)->pluck('limit_flag')->first();
         $amount_alloted = DB::table("active_round")->where('status', 1)->where('limit_flag', 1)->pluck('round_limit')->first();
         $active_round_id = DB::table("active_round")->where('status', 1)->pluck('id')->first();
-        $amount_used = Orders::select('team_id', \DB::raw('SUM(buy_value) as sum_of_total'))
-            ->where('round_id', $active_round_id)
-            ->groupBy('team_id')
-            ->get()->toArray();
+        if ($limit_flag == 1) {
+            $amount_used = Orders::select('team_id', \DB::raw('SUM(buy_value) as sum_of_total'))
+                ->where('round_id', $active_round_id)
+                ->groupBy('team_id')
+                ->get()->toArray();
+        } else {
+            $amount_used = Orders::select('team_id', \DB::raw('SUM(buy_value + brokerage) as sum_of_total'))
+                ->where('round_id', $active_round_id)
+                ->groupBy('team_id')
+                ->get()->toArray();
+        }
         $cash_available = CashLedger::select('team_id', 'cash_in_hand')->get()->toArray();
         if ($limit_flag == 1) {
             foreach ($amount_used as &$amount) {
