@@ -188,13 +188,13 @@ $(document).ready(function () {
                 totalBuyTransactions += (price * buyQuantity) + (((price * buyQuantity) + (price * sellQuantity)) * charges);
             }
         });
+        var limit_flag = $('#limit_flag').text();
         if (limit_flag == 0 | limit_flag == '0' | limit_flag == undefined) {
             buyAmount = totalBuyTransactions;
         }
         $('#limit_used').text(buyAmount);
         console.log(totalBuyTransactions);
         var amount = 0;
-        var limit_flag = $('#limit_flag').text();
         if (limit_flag == 1 | limit_flag == '1') {
             var amount_allocated = $('#amount_alloted').text();
             var amount_used_by_team = JSON.parse($('#amount_used').text());
