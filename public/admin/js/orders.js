@@ -329,7 +329,7 @@ $(document).ready(function () {
                         <td>${item.buy_value}</td>
                         <td>${item.sell_quantity}</td>
                         <td>${item.sell_value}</td>
-                        <td>${item.brokerage.toFixed(2)}</td>
+                        <td>${item.brokerage}</td>
                     </tr>
                 `);
             });
