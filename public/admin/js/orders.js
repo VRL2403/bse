@@ -92,7 +92,7 @@ $(document).ready(function () {
             var amount_allocated = $('#amount_alloted').text();
             var amount_used_by_team = JSON.parse($('#amount_used').text());
             amount = fetchAmount(parseInt($('#team').text()), amount_used_by_team, amount_allocated);
-            $('#amount_can_be_used').text(amount.toFixed(2));
+            $('#amount_can_be_used').text(amount);
         } else {
             var cash_available = JSON.parse($('#cash_available').text());
             var amount = 0;
@@ -101,13 +101,13 @@ $(document).ready(function () {
                     amount = cash_available[i]['cash_in_hand'];
                 }
             }
-            $('#amount_can_be_used').text(amount.toFixed(2));
+            $('#amount_can_be_used').text(amount);
         }
         var cash_available = JSON.parse($('#cash_available').text());
         if (!jQuery.isEmptyObject(cash_available)) {
             for (var i = 0; i < cash_available.length; i++) {
                 if (cash_available[i]['team_id'] === parseInt($('#team').text())) {
-                    $("#cash_in_hand").html(cash_available[i]['cash_in_hand'].toFixed(2));
+                    $("#cash_in_hand").html(cash_available[i]['cash_in_hand']);
                     $("#order_past_cash_in_hand").html(cash_available[i]['cash_in_hand']);
                 }
             }
@@ -149,20 +149,20 @@ $(document).ready(function () {
         var sellQuantity = parseInt(row.find('.sell-quantity').val());
 
         // Calculate and display the buy and sell values
-        var buyP = isNaN(buyQuantity) ? '' : (buyQuantity * price).toFixed(2);
-        var sellP = isNaN(sellQuantity) ? '' : (sellQuantity * price).toFixed(2);
+        var buyP = isNaN(buyQuantity) ? '' : (buyQuantity * price);
+        var sellP = isNaN(sellQuantity) ? '' : (sellQuantity * price);
         row.find('.buy-value').text(buyP);
         row.find('.sell-value').text(sellP);
         var buyP = parseFloat(buyP);
         var sellP = parseFloat(sellP);
         var brokageP = 0;
         if (!isNaN(buyP) && !isNaN(sellP)) {
-            brokageP = ((buyP + sellP) * (parseFloat(charges) / 100)).toFixed(2);
+            brokageP = ((buyP + sellP) * (parseFloat(charges) / 100));
         }
         else if (!isNaN(buyP)) {
-            brokageP = ((buyP) * (parseFloat(charges) / 100)).toFixed(2);
+            brokageP = ((buyP) * (parseFloat(charges) / 100));
         } else if (!isNaN(sellP)) {
-            brokageP = ((sellP) * (parseFloat(charges) / 100)).toFixed(2);
+            brokageP = ((sellP) * (parseFloat(charges) / 100));
         } else {
         }
         row.find('.brokerage-paid').text(brokageP);
@@ -191,7 +191,7 @@ $(document).ready(function () {
         if (limit_flag == 0 | limit_flag == '0' | limit_flag == undefined) {
             buyAmount = totalBuyTransactions;
         }
-        $('#limit_used').text(buyAmount.toFixed(2));
+        $('#limit_used').text(buyAmount);
         console.log(totalBuyTransactions);
         var amount = 0;
         var limit_flag = $('#limit_flag').text();
@@ -310,7 +310,7 @@ $(document).ready(function () {
                     sell_quantity: sellQuantity,
                     buy_value: price * buyQuantity,
                     sell_value: price * sellQuantity,
-                    brokerage: (((price * buyQuantity) + (price * sellQuantity)) * charges).toFixed(2),
+                    brokerage: (((price * buyQuantity) + (price * sellQuantity)) * charges),
                 };
                 orders.push(order);
             }
@@ -333,7 +333,7 @@ $(document).ready(function () {
                     </tr>
                 `);
             });
-            $('.order_total').text(totalBuyTransactions.toFixed(2));
+            $('.order_total').text(totalBuyTransactions);
             $('#order_confirmation').modal('show');
             $('#order_confirmation').removeClass('hidden').addClass('shown');
 
