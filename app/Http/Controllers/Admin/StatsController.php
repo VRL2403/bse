@@ -153,7 +153,7 @@ class StatsController extends Controller
             16 => 60,
             20 => 70
         ];
-        $orders = Orders::where('status', 1)->where('round_id', '<=', 4)->whereIn('company_id', [6, 11, 19])
+        $orders = Orders::where('status', 1)->where('round_id', '<=', 6)->whereIn('company_id', [4, 10, 13, 16, 20])
             ->selectRaw('sum(buy_quantity) as total_buy, sum(sell_quantity) as total_sell, company_id, team_id')
             ->groupBy('company_id', 'team_id')->get();
         // Find teams holding the company's shares
