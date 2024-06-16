@@ -146,16 +146,20 @@ class StatsController extends Controller
             11 => 30,
             19 => 40
         ];
-        // $round_7_companies=[
-        //     4=>
-        // ];
+        $round_7_companies = [
+            4 => 40,
+            10 => 40,
+            13 => 40,
+            16 => 60,
+            20 => 70
+        ];
         $orders = Orders::where('status', 1)->where('round_id', '<=', 4)->whereIn('company_id', [6, 11, 19])
             ->selectRaw('sum(buy_quantity) as total_buy, sum(sell_quantity) as total_sell, company_id, team_id')
             ->groupBy('company_id', 'team_id')->get();
         // Find teams holding the company's shares
         // $holdings = Ledger::where('company_id', $company_id)->get();
         foreach ($orders as $holding) {
-            $dividend = $round_3_companies[$holding->company_id];
+            $dividend = $round_7_companies[$holding->company_id];
             $quantity = $holding->total_buy - $holding->total_sell;
             // Calculate the total dividend
             $totalDividend = round($quantity * $dividend, 2);
