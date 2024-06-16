@@ -141,11 +141,24 @@ class StatsController extends Controller
     {
         $company_id = $request->input('company_id');
         $dividend = $request->input('dividend');
+        $round_3_companies = [
+            6 => 50,
+            11 => 30,
+            19 => 40
+        ];
+        // $round_7_companies=[
+        //     4=>
+        // ];
+        $orders = Orders::where('status', 1)->where('round_id', '<=', 4)->whereIn('company_id', [6, 11, 19])
+            ->selectRaw('sum(buy_quantity) as total_buy, sum(sell_quantity) as total_sell, company_id, team_id')
+            ->groupBy('company_id', 'team_id')->get();
         // Find teams holding the company's shares
-        $holdings = Ledger::where('company_id', $company_id)->get();
-        foreach ($holdings as $holding) {
+        // $holdings = Ledger::where('company_id', $company_id)->get();
+        foreach ($orders as $holding) {
+            $dividend = $round_3_companies[$holding->company_id];
+            $quantity = $holding->total_buy - $holding->total_sell;
             // Calculate the total dividend
-            $totalDividend = round($holding->quantity * $dividend, 2);
+            $totalDividend = round($quantity * $dividend, 2);
             // Update the cash ledger for the team
             CashLedger::where('team_id', $holding->team_id)
                 ->increment('cash_in_hand', $totalDividend);
